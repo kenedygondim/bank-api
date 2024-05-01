@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.bank.enumerator.StatusConta;
 import com.project.bank.enumerator.TipoConta;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -39,6 +36,7 @@ public class Conta {
     private String conta;
 
     @Column(nullable = false)
+    @Setter
     @Builder.Default
     private Double saldo = 0.0;
 

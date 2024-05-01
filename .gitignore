@@ -35,4 +35,4 @@ build/
 
 ### Confidenctial ###
 /src/main/resources/application.properties
-/src/main/java/com/project/banl/CodeRun
+/src/main/java/com/project/banl/CodeRun.Java

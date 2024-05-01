@@ -2,6 +2,7 @@ package com.project.bank.service.implementation;
 
 import com.project.bank.entity.dto.ContaDto;
 import com.project.bank.entity.dto.TransferenciaDto;
+import com.project.bank.entity.form.TransferenciaForm;
 import com.project.bank.entity.model.ChavePix;
 import com.project.bank.entity.model.Conta;
 import com.project.bank.entity.model.Transferencia;
@@ -16,6 +17,7 @@ import com.project.bank.service.repository.TransferenciaServiceRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,17 +30,23 @@ public class TransferenciaService implements TransferenciaServiceRep
     private final ChavePixRepository chavePixRepository;
 
     @Override
-    public Transferencia realizarTransferencia(long idContaOrigem, String chavePix, double valor, String senhaTransacao)
+    public TransferenciaDto realizarTransferencia(TransferenciaForm transferencia)
     {
-        ChavePix chave = chavePixRepository.findByChave(chavePix).orElseThrow(
-                () -> new RegistroNaoEncontradoException("chave PIX", chavePix)
+        ChavePix chave = chavePixRepository.findByChave(transferencia.getChavePix()).orElseThrow(
+                () -> new RegistroNaoEncontradoException("chave PIX", transferencia.getChavePix())
         );
-        Conta contaOrigem = contaRepository.findById(idContaOrigem).orElseThrow(
-                () -> new RegistroNaoEncontradoException("conta", idContaOrigem)
+        Conta contaOrigem = contaRepository.findById(transferencia.getContaOrigemId()).orElseThrow(
+                () -> new RegistroNaoEncontradoException("conta", transferencia.getContaOrigemId())
         );
 
+        if(transferencia.getValor() <= 0.01)
+            throw new BusinessException("Transações PIX devem ser acima de 1 centavo.");
+
+        if(transferencia.getValor() > contaOrigem.getSaldo())
+            throw new BusinessException("Saldo insuficiente");
+
         if(chave.getConta().equals(contaOrigem))
-            throw new BusinessException("Não é possível transferir para a mesma conta");
+            throw new BusinessException("Não é possível transferir para a própria conta");
 
         TipoConta tipoContaOrigem = contaOrigem.getTipoConta();
         if(tipoContaOrigem.equals(TipoConta.POUPANCA))
@@ -48,17 +56,34 @@ public class TransferenciaService implements TransferenciaServiceRep
         if(statusContaDestino.equals(StatusConta.BLOQUEADA) || statusContaDestino.equals(StatusConta.INATIVA))
             throw new BusinessException("Conta destino bloqueada no momento.");
 
-        if(!chave.getConta().getSenhaTransacao().getSenha().equals(senhaTransacao))
+        if(!chave.getConta().getSenhaTransacao().getSenha().equals(transferencia.getSenhaTransacao()))
             throw new BusinessException("Senha inválida!");
 
-        return null;
+       Transferencia objConstruido =
+               Transferencia.builder()
+                       .remetente(contaOrigem)
+                       .destinatario(chave.getConta())
+                       .valor(transferencia.getValor())
+                       .dataTransferencia(LocalDateTime.now())
+                       .build();
+
+       //Alterar posteriormente
+       contaOrigem.setSaldo(contaOrigem.getSaldo() - transferencia.getValor());
+       chave.getConta().setSaldo(chave.getConta().getSaldo() + transferencia.getValor());
+
+       transferenciaRepository.save(objConstruido);
+       contaRepository.save(contaOrigem);
+       contaRepository.save(chave.getConta());
+
+       return converteTransferenciaDto(objConstruido);
     }
 
     @Override
     public TransferenciaDto obterTransferencia(long id) {
-        Transferencia transferencia = transferenciaRepository.findById(id).orElse(null);
-        if(transferencia == null)
-            return null;
+        Transferencia transferencia = transferenciaRepository.findById(id).orElseThrow(
+                () -> new RegistroNaoEncontradoException("chave PIX", id)
+        );
+
         return converteTransferenciaDto(transferencia);
     }
 

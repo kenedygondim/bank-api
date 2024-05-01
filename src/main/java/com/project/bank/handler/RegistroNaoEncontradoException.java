@@ -2,7 +2,7 @@ package com.project.bank.handler;
 
 public class RegistroNaoEncontradoException extends BusinessException{
     public RegistroNaoEncontradoException(String tipo, long id) {
-        super("Registro de %s com id %i não encontrado.", tipo, id);
+        super("Registro de %s com id %s não encontrado.", tipo, id);
     }
 
     public RegistroNaoEncontradoException(String tipo, String valor) {

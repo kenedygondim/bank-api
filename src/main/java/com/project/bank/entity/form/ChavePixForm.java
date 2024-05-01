@@ -13,8 +13,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChavePixForm {
-    @NotNull(message = "Tipo de chave não pode ser nulo")
     private TipoChave TipoChave;
-    @NotNull(message = "Conta Id não pode ser nulo")
     private long ContaId;
 }

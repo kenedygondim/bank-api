@@ -1,14 +1,12 @@
 package com.project.bank.resource.controller;
 
 import com.project.bank.entity.dto.TransferenciaDto;
+import com.project.bank.entity.form.TransferenciaForm;
 import com.project.bank.entity.model.Transferencia;
 import com.project.bank.service.implementation.TransferenciaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +16,12 @@ import java.util.List;
 public class TransferenciaConroller {
 
     private final TransferenciaService transferenciaService;
+
+    @PostMapping
+    public ResponseEntity<TransferenciaDto> realizarTransferencia(@RequestBody TransferenciaForm transferencia)
+    {
+        return ResponseEntity.ok(transferenciaService.realizarTransferencia(transferencia));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<TransferenciaDto> obterTransferencia(@PathVariable("id") long id)
