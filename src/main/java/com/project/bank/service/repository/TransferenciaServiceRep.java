@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface TransferenciaServiceRep
 {
-    Transferencia realizarTransferencia(long idContaOrigem, long idContaDestino, double valor);
+    Transferencia realizarTransferencia(long idContaOrigem, String chavePix, double valor, String senhaTransacao);
     TransferenciaDto obterTransferencia(long id);
     List<TransferenciaDto> obterTransferenciasCliente(long id);
 }

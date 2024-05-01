@@ -1,14 +1,18 @@
 package com.project.bank.service.implementation;
 
 import com.project.bank.entity.dto.ChavePixDto;
+import com.project.bank.entity.form.ChavePixForm;
 import com.project.bank.entity.model.ChavePix;
 import com.project.bank.entity.model.Conta;
 import com.project.bank.enumerator.TipoChave;
+import com.project.bank.handler.BusinessException;
+import com.project.bank.handler.RegistroNaoEncontradoException;
 import com.project.bank.repository.ChavePixRepository;
 import com.project.bank.repository.ContaRepository;
 import com.project.bank.service.repository.ChavePixServiceRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 import java.util.Random;
@@ -21,18 +25,18 @@ public class ChavePixService implements ChavePixServiceRep
     private final ContaRepository contaRepository;
 
     @Override
-    public ChavePix cadastrarChavePix(ChavePixDto chavePix)
+    public ChavePix cadastrarChavePix(ChavePixForm chavePix)
     {
-        Conta conta = contaRepository.findById(chavePix.getContaId()).orElseThrow( () -> {
-                    throw new RuntimeException("Conta inexistente");
-                }
+        Conta conta = contaRepository.findById(chavePix.getContaId()).orElseThrow(
+                () -> new RegistroNaoEncontradoException("conta", chavePix.getContaId())
         );
+
         List<ChavePix> chavesPix = listarChavesPixConta(chavePix.getContaId());
 
         for (ChavePix pix : chavesPix)
         {
             if (pix.getTipoChave().equals(chavePix.getTipoChave()))
-                throw new RuntimeException("Você já cadastrou uma chave pix para este tipo");
+                throw new BusinessException("Você já cadastrou uma chave pix para este tipo");
         }
 
         ChavePix objConstruido =
@@ -41,13 +45,17 @@ public class ChavePixService implements ChavePixServiceRep
                         .conta(conta)
                         .chave(converteEnumEmString(conta, chavePix.getTipoChave()))
                         .build();
+
         chavePixRepository.save(objConstruido);
         return objConstruido;
     }
 
     @Override
     public List<ChavePix> listarChavesPixConta(long id) {
-        return chavePixRepository.findAllByContaId(id);
+        return chavePixRepository.findAllByContaId(id).orElseThrow( () -> {
+                    throw new RegistroNaoEncontradoException("conta", id);
+                }
+        );
     }
 
     @Override
@@ -63,7 +71,7 @@ public class ChavePixService implements ChavePixServiceRep
             case EMAIL -> conta.getCliente().getEmail();
             case NUMERO_TELEFONE -> conta.getCliente().getNumeroTelefone();
             case ALEATORIA -> geraChaveAleatoria();
-            default -> throw new RuntimeException("Tipo de chave inválida");
+            default -> throw new BusinessException("Tipo de chave inválida");
         };
         return temp;
     }

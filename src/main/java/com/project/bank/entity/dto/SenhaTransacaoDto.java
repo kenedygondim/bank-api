@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class SenhaTransacaoDto
 {
+    private String id;
     private String senhaTransacao;
 }

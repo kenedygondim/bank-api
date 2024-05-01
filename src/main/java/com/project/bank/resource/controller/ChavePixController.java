@@ -2,12 +2,14 @@ package com.project.bank.resource.controller;
 
 
 import com.project.bank.entity.dto.ChavePixDto;
+import com.project.bank.entity.form.ChavePixForm;
 import com.project.bank.entity.model.ChavePix;
 import com.project.bank.service.implementation.ChavePixService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +26,7 @@ public class ChavePixController
     }
 
     @PostMapping
-    public ResponseEntity<ChavePix> cadastrarChavePix(@RequestBody ChavePixDto chavePix)
+    public ResponseEntity<ChavePix> cadastrarChavePix(@Valid @RequestBody ChavePixForm chavePix)
     {
         return ResponseEntity.ok(chavePixService.cadastrarChavePix(chavePix));
     }

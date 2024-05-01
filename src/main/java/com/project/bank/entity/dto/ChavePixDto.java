@@ -6,11 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Data
 public class ChavePixDto {
-    private TipoChave TipoChave;
-    private long ContaId;
+    private long id;
+    private String tipoChave;
+    private String chave;
 }

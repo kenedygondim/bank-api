@@ -11,7 +11,10 @@ import lombok.NoArgsConstructor;
 @Data
 public class ClienteDto
 {
-
+    private long id;
+    private String nomeCompleto;
+    private String cpf;
+    private String dataNascimento;
     private String email;
     private  String numeroTelefone;
 }

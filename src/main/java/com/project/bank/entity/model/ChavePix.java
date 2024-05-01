@@ -30,4 +30,5 @@ public class ChavePix {
     @JoinColumn(name = "conta_id",nullable = false)
     @JsonIgnore
     private Conta conta;
+
 }

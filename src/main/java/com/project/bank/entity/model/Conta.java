@@ -50,4 +50,7 @@ public class Conta {
     @JoinColumn(name = "cliente_id", nullable = false)
     @JsonIgnore
     private Cliente cliente;
+
+    @OneToOne(mappedBy = "conta")
+    private SenhaTransacao senhaTransacao;
 }

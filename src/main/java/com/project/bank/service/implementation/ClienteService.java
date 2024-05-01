@@ -2,6 +2,8 @@ package com.project.bank.service.implementation;
 
 import com.project.bank.entity.dto.ClienteDto;
 import com.project.bank.entity.model.Cliente;
+import com.project.bank.handler.BusinessException;
+import com.project.bank.handler.RegistroNaoEncontradoException;
 import com.project.bank.repository.ClienteRepository;
 import com.project.bank.service.repository.ClienteServiceRep;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +25,12 @@ public class ClienteService implements ClienteServiceRep
     public Cliente cadastrarCliente(Cliente cliente)
     {
         if(cliente.getPrimeiroNome().length() <= 1 || cliente.getSobrenome().length() <= 1)
-            return null;
+            throw new BusinessException("Nome e sobrenome devem ter mais de 1 caractere");
         if(cliente.getCpf().length() != 11)
-            return null;
+            throw new BusinessException("CPF inválido");
         if(retornaIdadeCliente(cliente.getDataNascimento()) < 18)
-            return null;
+            throw new BusinessException("Clientes devem ser maiores de 18 anos.");
 
-        //to-do: criar padrões com regex
-        //to-do: criar métodos separados de validação
-        //to-do: criar validação de email e envio de email de confirmação
-        //to-do: criar transações para criar cliente e conta ao mesmo tempo
 
         Cliente clienteConstruido =
                 Cliente.builder()
@@ -49,13 +47,11 @@ public class ClienteService implements ClienteServiceRep
         return clienteConstruido;
     }
 
-
-
     @Override
     public Cliente obterCliente(long id)
     {
         return clienteRepository.findById(id).orElseThrow(
-                () -> { throw new RuntimeException("Cliente não encontrado"); }
+                () -> { throw new RegistroNaoEncontradoException("cliente", id); }
         );
     }
 
