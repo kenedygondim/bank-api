@@ -9,11 +9,13 @@ import com.project.bank.service.repository.ClienteServiceRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 
 @Service
@@ -48,10 +50,17 @@ public class ClienteService implements ClienteServiceRep
     }
 
     @Override
+    public List<Cliente> obterClientes()
+    {
+        return clienteRepository.findAll();
+    }
+
+
+    @Override
     public Cliente obterCliente(long id)
     {
         return clienteRepository.findById(id).orElseThrow(
-                () -> { throw new RegistroNaoEncontradoException("cliente", id); }
+                () -> new RegistroNaoEncontradoException("cliente", id)
         );
     }
 

@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/bank/clientes")
 @RequiredArgsConstructor
@@ -17,6 +19,12 @@ public class ClienteController
     public ResponseEntity<Cliente> obterCliente(@PathVariable("id") long id)
     {
         return ResponseEntity.ok(clienteService.obterCliente(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Cliente>> obterClientes()
+    {
+        return ResponseEntity.ok(clienteService.obterClientes());
     }
 
     @PostMapping

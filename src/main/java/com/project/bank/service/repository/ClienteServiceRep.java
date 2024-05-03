@@ -11,6 +11,7 @@ import java.util.List;
 public interface ClienteServiceRep
 {
     Cliente cadastrarCliente(Cliente cliente);
+    List<Cliente> obterClientes();
     Cliente obterCliente(long id);
     Cliente atualizarCliente(ClienteDto cliente);
     String excluirCliente(long id);
