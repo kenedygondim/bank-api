@@ -25,14 +25,14 @@ public class EnderecoService implements EnderecoServiceRep {
     @Override
     public Endereco cadastrarEndereco(EnderecoForm endereco)
     {
-        Cliente cliente = clienteRepository.findById(endereco.getClienteId()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("cliente", endereco.getClienteId())
+        Cliente cliente = clienteRepository.findById(endereco.clienteId()).orElseThrow(
+                () -> new RegistroNaoEncontradoException("cliente", endereco.clienteId())
         );
 
         if(cliente.getEndereco() != null)
             throw new BusinessException("O cliente já possui um endereço cadastrado.");
 
-        EnderecoResponse enderecoResponse = enderecoFeign.buscaEnderecoCep(endereco.getCep()).orElseThrow(
+        EnderecoResponse enderecoResponse = enderecoFeign.buscaEnderecoCep(endereco.cep()).orElseThrow(
                 () -> new BusinessException("CEP não encontrado.")
         );
 
@@ -42,8 +42,8 @@ public class EnderecoService implements EnderecoServiceRep {
                 .cidade(enderecoResponse.getLocalidade())
                 .bairro(enderecoResponse.getBairro())
                 .logradouro(enderecoResponse.getLogradouro())
-                .numero(endereco.getNumero())
-                .complemento(endereco.getComplemento())
+                .numero(endereco.numero())
+                .complemento(endereco.complemento())
                 .cliente(cliente)
                 .build();
 
@@ -51,7 +51,7 @@ public class EnderecoService implements EnderecoServiceRep {
     }
 
     @Override
-    public Endereco obterEnderecoPeloClienteId(long clienteId) {
+    public Endereco obterEnderecoPeloClienteId(String clienteId) {
         Cliente cliente = clienteRepository.findById(clienteId).orElseThrow(
                 () -> new RegistroNaoEncontradoException("cliente", clienteId)
         );

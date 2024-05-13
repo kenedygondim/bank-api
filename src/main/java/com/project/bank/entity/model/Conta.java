@@ -1,15 +1,19 @@
 package com.project.bank.entity.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.bank.enumerator.StatusConta;
-import com.project.bank.enumerator.TipoConta;
+
+import com.project.bank.enumerator.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_contas")
@@ -32,8 +36,9 @@ public class Conta {
     @Builder.Default
     private String agencia = "0001";
 
-    @Column(nullable = false, length = 8)
-    private String conta;
+    @Column(name = "num_conta", nullable = false, length = 8)
+    private String numConta;
+
 
     @Column(nullable = false)
     @Setter
@@ -51,4 +56,5 @@ public class Conta {
 
     @OneToOne(mappedBy = "conta")
     private SenhaTransacao senhaTransacao;
+
 }

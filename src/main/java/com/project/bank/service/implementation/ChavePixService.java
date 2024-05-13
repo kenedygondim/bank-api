@@ -1,6 +1,5 @@
 package com.project.bank.service.implementation;
 
-import com.project.bank.entity.dto.ChavePixDto;
 import com.project.bank.entity.form.ChavePixForm;
 import com.project.bank.entity.model.ChavePix;
 import com.project.bank.entity.model.Conta;
@@ -12,7 +11,6 @@ import com.project.bank.repository.ContaRepository;
 import com.project.bank.service.repository.ChavePixServiceRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 import java.util.Random;
@@ -27,23 +25,23 @@ public class ChavePixService implements ChavePixServiceRep
     @Override
     public ChavePix cadastrarChavePix(ChavePixForm chavePix)
     {
-        Conta conta = contaRepository.findById(chavePix.getContaId()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("conta", chavePix.getContaId())
+        Conta conta = contaRepository.findById(chavePix.contaId()).orElseThrow(
+                () -> new RegistroNaoEncontradoException("conta", chavePix.contaId())
         );
 
-        List<ChavePix> chavesPix = listarChavesPixConta(chavePix.getContaId());
+        List<ChavePix> chavesPix = listarChavesPixConta(chavePix.contaId());
 
         for (ChavePix pix : chavesPix)
         {
-            if (pix.getTipoChave().equals(chavePix.getTipoChave()))
+            if (pix.getTipoChave().equals(chavePix.tipoChave()))
                 throw new BusinessException("Você já cadastrou uma chave pix para este tipo");
         }
 
         ChavePix objConstruido =
                 ChavePix.builder()
-                        .tipoChave(chavePix.getTipoChave())
+                        .tipoChave(chavePix.tipoChave())
                         .conta(conta)
-                        .chave(converteEnumEmString(conta, chavePix.getTipoChave()))
+                        .chave(converteEnumEmString(conta, chavePix.tipoChave()))
                         .build();
 
         chavePixRepository.save(objConstruido);

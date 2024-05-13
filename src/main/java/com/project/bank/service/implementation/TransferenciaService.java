@@ -32,17 +32,20 @@ public class TransferenciaService implements TransferenciaServiceRep
     @Override
     public TransferenciaDto realizarTransferencia(TransferenciaForm transferencia)
     {
-        ChavePix chave = chavePixRepository.findByChave(transferencia.getChavePix()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("chave PIX", transferencia.getChavePix())
+        ChavePix chave = chavePixRepository.findByChave(transferencia.chavePix()).orElseThrow(
+                () -> new RegistroNaoEncontradoException("chave PIX", transferencia.chavePix())
         );
-        Conta contaOrigem = contaRepository.findById(transferencia.getContaOrigemId()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("conta", transferencia.getContaOrigemId())
+        Conta contaOrigem = contaRepository.findById(transferencia.contaOrigemId()).orElseThrow(
+                () -> new RegistroNaoEncontradoException("conta", transferencia.contaOrigemId())
         );
 
-        if(transferencia.getValor() <= 0.01)
+        if(contaOrigem.getSenhaTransacao() == null)
+            throw new BusinessException("Cadastre uma senha para transações.");
+
+        if(transferencia.valor() <= 0.01)
             throw new BusinessException("Transações PIX devem ser acima de 1 centavo.");
 
-        if(transferencia.getValor() > contaOrigem.getSaldo())
+        if(transferencia.valor() > contaOrigem.getSaldo())
             throw new BusinessException("Saldo insuficiente");
 
         if(chave.getConta().equals(contaOrigem))
@@ -56,20 +59,19 @@ public class TransferenciaService implements TransferenciaServiceRep
         if(statusContaDestino.equals(StatusConta.BLOQUEADA) || statusContaDestino.equals(StatusConta.INATIVA))
             throw new BusinessException("Conta destino bloqueada no momento.");
 
-        if(!chave.getConta().getSenhaTransacao().getSenha().equals(transferencia.getSenhaTransacao()))
+        if(!chave.getConta().getSenhaTransacao().getSenha().equals(transferencia.senhaTransacao()))
             throw new BusinessException("Senha inválida!");
 
        Transferencia objConstruido =
                Transferencia.builder()
                        .remetente(contaOrigem)
                        .destinatario(chave.getConta())
-                       .valor(transferencia.getValor())
+                       .valor(transferencia.valor())
                        .dataTransferencia(LocalDateTime.now())
                        .build();
 
-       //Alterar posteriormente
-       contaOrigem.setSaldo(contaOrigem.getSaldo() - transferencia.getValor());
-       chave.getConta().setSaldo(chave.getConta().getSaldo() + transferencia.getValor());
+       contaOrigem.setSaldo(contaOrigem.getSaldo() - transferencia.valor());
+       chave.getConta().setSaldo(chave.getConta().getSaldo() + transferencia.valor());
 
        transferenciaRepository.save(objConstruido);
        contaRepository.save(contaOrigem);
@@ -119,7 +121,7 @@ public class TransferenciaService implements TransferenciaServiceRep
                 .agencia(conta.getAgencia())
                 .tipoConta(conta.getTipoConta())
                 .statusConta(conta.getStatusConta())
-                .conta(conta.getConta())
+                .conta(conta.getNumConta())
                 .build();
     }
 }

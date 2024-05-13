@@ -21,7 +21,7 @@ public class EnderecoController {
     }
 
     @GetMapping("/{clienteId}")
-    public ResponseEntity<Endereco> obterEnderecoPeloClienteId(@PathVariable long clienteId)
+    public ResponseEntity<Endereco> obterEnderecoPeloClienteId(@PathVariable String clienteId)
     {
         return ResponseEntity.ok(enderecoService.obterEnderecoPeloClienteId(clienteId));
     }

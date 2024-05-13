@@ -1,16 +1,16 @@
 package com.project.bank.enumerator;
 
 public enum TipoConta {
-    CORRENTE(0),
-    POUPANCA(1);
+    CORRENTE("CORRENTE"),
+    POUPANCA("POUPANCA");
 
-    private final int codigo;
+    private final String tipoConta;
 
-    TipoConta(int codigo) {
-        this.codigo = codigo;
+    TipoConta(String tipoConta) {
+        this.tipoConta = tipoConta;
     }
 
-    public int getCodigo() {
-        return this.codigo;
+    public String getCodigo() {
+        return this.tipoConta;
     }
 }
