@@ -1,18 +1,18 @@
 package com.project.bank.enumerator;
 
 public enum TipoChave {
-    CPF(1),
-    NUMERO_TELEFONE(2),
-    EMAIL(3),
-    ALEATORIA(4);
+    CPF("CPF"),
+    NUMERO_TELEFONE("TELEFONE"),
+    EMAIL("EMAIL"),
+    ALEATORIA("ALEATORIA");
 
-    private final int codigo;
+    private final String tipoChave;
 
-    TipoChave(int codigo) {
-        this.codigo = codigo;
+    TipoChave(String tipoChave) {
+        this.tipoChave = tipoChave;
     }
 
-    public int getCodigo() {
-        return this.codigo;
+    public String getCodigo() {
+        return tipoChave;
     }
 }
