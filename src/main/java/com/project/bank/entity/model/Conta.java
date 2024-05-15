@@ -1,8 +1,8 @@
 package com.project.bank.entity.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import com.project.bank.enumeration.*;
+import com.project.bank.enumeration.StatusConta;
+import com.project.bank.enumeration.TipoConta;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -34,7 +34,6 @@ public class Conta {
     @Column(name = "num_conta", nullable = false, length = 8)
     private String numConta;
 
-
     @Column(nullable = false)
     @Setter
     @Builder.Default
@@ -51,5 +50,4 @@ public class Conta {
 
     @OneToOne(mappedBy = "conta")
     private SenhaTransacao senhaTransacao;
-
 }

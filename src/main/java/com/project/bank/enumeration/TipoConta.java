@@ -1,6 +1,7 @@
 package com.project.bank.enumeration;
 
-public enum TipoConta {
+public enum TipoConta
+{
     CORRENTE("CORRENTE"),
     POUPANCA("POUPANCA");
 

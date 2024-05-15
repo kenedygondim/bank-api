@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/bank/senhaTransacao")
 @AllArgsConstructor
-public class SenhaTransacaoController {
+public class SenhaTransacaoController
+{
     private final SenhaTransacaoService senhaTransacaoService;
 
     @PostMapping

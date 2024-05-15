@@ -30,11 +30,11 @@ public class ContaService implements ContaServiceRep {
     @Override
     public void aprovarConta(String id)
     {
-        Usuario cliente = usuarioRepository.findById(id).orElseThrow(
-                () -> new RegistroNaoEncontradoException("cliente", id)
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(
+                () -> new RegistroNaoEncontradoException("usuario", id)
         );
 
-        cliente.setSolicitacaoConta(SolicitacaoConta.APROVADA);
+        usuario.setSolicitacaoConta(SolicitacaoConta.APROVADA);
 
         Conta contaBuilder =
                 Conta.builder()
@@ -43,7 +43,7 @@ public class ContaService implements ContaServiceRep {
                 .tipoConta(TipoConta.CORRENTE)
                 .statusConta(StatusConta.ATIVA)
                 .saldo(0.0)
-                .usuario(cliente)
+                .usuario(usuario)
                 .dataCriacao(LocalDateTime.now())
                 .build();
 
@@ -55,11 +55,11 @@ public class ContaService implements ContaServiceRep {
     @Override
     public void reprovarConta(String id)
     {
-        Usuario cliente = usuarioRepository.findById(id).orElseThrow(
-                () -> new RegistroNaoEncontradoException("cliente", id)
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(
+                () -> new RegistroNaoEncontradoException("usuario", id)
         );
 
-        usuarioRepository.deleteById(cliente.getId());
+        usuarioRepository.deleteById(usuario.getId());
     }
 
     @Override

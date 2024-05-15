@@ -1,11 +1,9 @@
 package com.project.bank.entity.dto;
 
-import com.project.bank.entity.model.Conta;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @AllArgsConstructor

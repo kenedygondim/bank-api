@@ -2,7 +2,6 @@ package com.project.bank.email;
 
 import lombok.Builder;
 import lombok.Data;
-
 import javax.validation.constraints.NotNull;
 
 @Data

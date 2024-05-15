@@ -1,5 +1,6 @@
 package com.project.bank.entity.dto;
 
+import com.project.bank.enumeration.TipoChave;
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,6 +8,6 @@ import lombok.Data;
 @Data
 public class ChavePixDto {
     private long id;
-    private String tipoChave;
+    private TipoChave tipoChave;
     private String chave;
 }

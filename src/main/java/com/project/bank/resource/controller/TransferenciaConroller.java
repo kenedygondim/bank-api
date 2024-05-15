@@ -13,8 +13,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/bank/transferencias")
 @RequiredArgsConstructor
-public class TransferenciaConroller {
-
+public class TransferenciaConroller
+{
     private final TransferenciaService transferenciaService;
 
     @PostMapping

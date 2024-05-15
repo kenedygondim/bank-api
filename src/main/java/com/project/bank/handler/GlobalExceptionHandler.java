@@ -18,14 +18,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
     private MessageSource messageSource;
 
     //headers
-    private HttpHeaders headers(){
+    private HttpHeaders headers()
+    {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
     }
 
 
-    private ResponseError responseError(String message, HttpStatus statusCode){
+    private ResponseError responseError(String message, HttpStatus statusCode)
+    {
         ResponseError responseError = new ResponseError();
         responseError.setStatus("error");
         responseError.setStatusCode(statusCode.value());
@@ -36,11 +38,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(Exception.class)
     private ResponseEntity<Object> handleGeneral(Exception ex, WebRequest req)
     {
-        if(ex.getClass().isAssignableFrom(UndeclaredThrowableException.class)) {
+        if(ex.getClass().isAssignableFrom(UndeclaredThrowableException.class))
+        {
             UndeclaredThrowableException undeclaredThrowableException = (UndeclaredThrowableException) ex;
             return handleGeneral((Exception) undeclaredThrowableException.getUndeclaredThrowable(), req);
         }
-        else {
+        else
+        {
             String message = messageSource.getMessage("error.server", new Object[]{ex.getMessage()}, null);
             ResponseError responseError = responseError(message, HttpStatus.INTERNAL_SERVER_ERROR);
             return handleExceptionInternal(ex, responseError, headers(), HttpStatus.INTERNAL_SERVER_ERROR, req);
@@ -53,6 +57,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
         ResponseError responseError = responseError(ex.getMessage(), HttpStatus.CONFLICT);
         return handleExceptionInternal(ex, responseError, headers(), HttpStatus.CONFLICT, req);
     }
-
-
 }

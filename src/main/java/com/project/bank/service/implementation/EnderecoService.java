@@ -25,12 +25,12 @@ public class EnderecoService implements EnderecoServiceRep {
     @Override
     public Endereco cadastrarEndereco(EnderecoForm endereco)
     {
-        Usuario cliente = usuarioRepository.findById(endereco.usuarioId()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("cliente", endereco.usuarioId())
+        Usuario usuario = usuarioRepository.findById(endereco.usuarioId()).orElseThrow(
+                () -> new RegistroNaoEncontradoException("usuario", endereco.usuarioId())
         );
 
-        if(cliente.getEndereco() != null)
-            throw new BusinessException("O cliente já possui um endereço cadastrado.");
+        if(usuario.getEndereco() != null)
+            throw new BusinessException("O usuario já possui um endereço cadastrado.");
 
         EnderecoResponse enderecoResponse = enderecoFeign.buscaEnderecoCep(endereco.cep()).orElseThrow(
                 () -> new BusinessException("CEP não encontrado.")
@@ -44,22 +44,22 @@ public class EnderecoService implements EnderecoServiceRep {
                 .logradouro(enderecoResponse.getLogradouro())
                 .numero(endereco.numero())
                 .complemento(endereco.complemento())
-                .usuario(cliente)
+                .usuario(usuario)
                 .build();
 
         return enderecoRepository.save(objConstruido);
     }
 
     @Override
-    public Endereco obterEnderecoPeloClienteId(String clienteId) {
-        Usuario cliente = usuarioRepository.findById(clienteId).orElseThrow(
-                () -> new RegistroNaoEncontradoException("cliente", clienteId)
+    public Endereco obterEnderecoPeloUsuarioId(String usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(
+                () -> new RegistroNaoEncontradoException("usuario", usuarioId)
         );
 
-        if(cliente.getEndereco() == null)
-            throw new BusinessException("O cliente não possui endereço cadastrado.");
+        if(usuario.getEndereco() == null)
+            throw new BusinessException("O usuario não possui endereço cadastrado.");
 
-        return cliente.getEndereco();
+        return usuario.getEndereco();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.project.bank.enumeration;
 
-public enum StatusConta {
+public enum StatusConta
+{
     ATIVA("ATIVA"),
     INATIVA("INATIVA"),
     BLOQUEADA("BLOQUEADA");

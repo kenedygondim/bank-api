@@ -1,12 +1,9 @@
 package com.project.bank.repository;
 
-
-import com.project.bank.entity.model.ChavePix;
 import com.project.bank.entity.model.Transferencia;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository

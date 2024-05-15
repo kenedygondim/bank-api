@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
 
 @RestController
@@ -38,12 +37,9 @@ public class AuthController
         if(usuario.getSolicitacaoConta() == SolicitacaoConta.PENDENTE || usuario.getSolicitacaoConta() == SolicitacaoConta.RECUSADA)
             throw new BusinessException("Sua solicitação de conta está pendente ou foi recusada.");
 
-        var clienteSenha =  new UsernamePasswordAuthenticationToken(form.cpf(), form.senha());
-
-        var auth = authManager.authenticate(clienteSenha);
-
+        var usuarioCredentials =  new UsernamePasswordAuthenticationToken(form.cpf(), form.senha());
+        var auth = authManager.authenticate(usuarioCredentials);
         var token = tokenService.generateToken((Usuario) auth.getPrincipal());
-
         return ResponseEntity.ok(token);
     }
 }

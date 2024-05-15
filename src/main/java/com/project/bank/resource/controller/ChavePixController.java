@@ -1,13 +1,11 @@
 package com.project.bank.resource.controller;
 
-
 import com.project.bank.entity.form.ChavePixForm;
 import com.project.bank.entity.model.ChavePix;
 import com.project.bank.service.implementation.ChavePixService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -34,5 +32,4 @@ public class ChavePixController
         chavePixService.excluirChavePix(id);
         return ResponseEntity.ok("Chave PIX excluída");
     }
-
 }

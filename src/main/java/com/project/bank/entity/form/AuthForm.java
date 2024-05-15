@@ -1,7 +1,6 @@
 package com.project.bank.entity.form;
 
 import jakarta.validation.constraints.NotBlank;
-
 import javax.validation.constraints.*;
 
 public record AuthForm

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/bank/endereco")
-public class EnderecoController {
-
+public class EnderecoController
+{
     private final EnderecoService enderecoService;
 
     @PostMapping
@@ -20,9 +20,9 @@ public class EnderecoController {
         return ResponseEntity.ok(enderecoService.cadastrarEndereco(endereco));
     }
 
-    @GetMapping("/{clienteId}")
-    public ResponseEntity<Endereco> obterEnderecoPeloClienteId(@PathVariable String clienteId)
+    @GetMapping("/{usuarioId}")
+    public ResponseEntity<Endereco> obterEnderecoPeloUsuarioId(@PathVariable String usuarioId)
     {
-        return ResponseEntity.ok(enderecoService.obterEnderecoPeloClienteId(clienteId));
+        return ResponseEntity.ok(enderecoService.obterEnderecoPeloUsuarioId(usuarioId));
     }
 }

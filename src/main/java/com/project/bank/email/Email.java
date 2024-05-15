@@ -1,7 +1,6 @@
 package com.project.bank.email;
 
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Data

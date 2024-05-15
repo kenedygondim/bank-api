@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class SenhaTransacaoService implements SenhaTransacaoServiceRep {
-
+public class SenhaTransacaoService implements SenhaTransacaoServiceRep
+{
     private final SenhaTransacaoRepository senhaTransacaoRepository;
     private final ContaRepository contaRepository;
 
     @Override
-    public SenhaTransacao cadastrarSenhaTransacao(SenhaTransacaoPostForm senhaTransacao) {
-
+    public SenhaTransacao cadastrarSenhaTransacao(SenhaTransacaoPostForm senhaTransacao)
+    {
         Conta conta = contaRepository.findById(senhaTransacao.contaId()).orElseThrow(
                 () -> new RegistroNaoEncontradoException("conta", senhaTransacao.contaId())
         );
@@ -65,7 +65,6 @@ public class SenhaTransacaoService implements SenhaTransacaoServiceRep {
 
         return senhaTransacaoRepository.save(conta.getSenhaTransacao());
     }
-
 
     private void verificaDigitosSenha(String senha)
     {

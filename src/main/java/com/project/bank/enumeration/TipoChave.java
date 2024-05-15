@@ -1,6 +1,7 @@
 package com.project.bank.enumeration;
 
-public enum TipoChave {
+public enum TipoChave
+{
     CPF("CPF"),
     NUMERO_TELEFONE("TELEFONE"),
     EMAIL("EMAIL"),

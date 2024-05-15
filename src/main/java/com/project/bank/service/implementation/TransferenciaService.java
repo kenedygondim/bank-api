@@ -90,7 +90,8 @@ public class TransferenciaService implements TransferenciaServiceRep
     }
 
     @Override
-    public List<TransferenciaDto> obterTransferenciasCliente(long id) {
+    public List<TransferenciaDto> obterTransferenciasCliente(long id)
+    {
         List<Transferencia> transfs = transferenciaRepository.findAllByRemetenteIdOrDestinatarioId(id);
         return converteListaTransferenciaDto(transfs);
     }
