@@ -1,7 +1,7 @@
 package com.project.bank.entity.dto;
 
-import com.project.bank.enumerator.StatusConta;
-import com.project.bank.enumerator.TipoConta;
+import com.project.bank.enumeration.StatusConta;
+import com.project.bank.enumeration.TipoConta;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

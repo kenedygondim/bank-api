@@ -1,7 +1,7 @@
 package com.project.bank.entity.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.bank.enumerator.TipoChave;
+import com.project.bank.enumeration.TipoChave;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

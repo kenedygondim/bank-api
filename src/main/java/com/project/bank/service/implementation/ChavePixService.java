@@ -3,7 +3,7 @@ package com.project.bank.service.implementation;
 import com.project.bank.entity.form.ChavePixForm;
 import com.project.bank.entity.model.ChavePix;
 import com.project.bank.entity.model.Conta;
-import com.project.bank.enumerator.TipoChave;
+import com.project.bank.enumeration.TipoChave;
 import com.project.bank.handler.BusinessException;
 import com.project.bank.handler.RegistroNaoEncontradoException;
 import com.project.bank.repository.ChavePixRepository;
@@ -49,8 +49,11 @@ public class ChavePixService implements ChavePixServiceRep
     }
 
     @Override
-    public List<ChavePix> listarChavesPixConta(long id) {
-        return chavePixRepository.findAllByContaId(id).orElseThrow( () -> {
+    public List<ChavePix> listarChavesPixConta(long id)
+    {
+        return chavePixRepository.findAllByContaId(id).orElseThrow
+                ( () ->
+                {
                     throw new RegistroNaoEncontradoException("conta", id);
                 }
         );
@@ -64,10 +67,11 @@ public class ChavePixService implements ChavePixServiceRep
     private String converteEnumEmString(Conta conta, TipoChave tipoChave)
     {
         String temp;
-        temp = switch (tipoChave) {
-            case CPF -> conta.getCliente().getCpf();
-            case EMAIL -> conta.getCliente().getEmail();
-            case NUMERO_TELEFONE -> conta.getCliente().getNumeroTelefone();
+        temp = switch (tipoChave)
+        {
+            case CPF -> conta.getUsuario().getCpf();
+            case EMAIL -> conta.getUsuario().getEmail();
+            case NUMERO_TELEFONE -> conta.getUsuario().getNumeroTelefone();
             case ALEATORIA -> geraChaveAleatoria();
             default -> throw new BusinessException("Tipo de chave inválida");
         };
@@ -91,6 +95,5 @@ public class ChavePixService implements ChavePixServiceRep
         }
         return chaveBuilder.toString();
     }
-
 
 }

@@ -1,7 +1,6 @@
 package com.project.bank.service;
 
-import com.project.bank.repository.ClienteRepository;
-import com.project.bank.repository.ContaRepository;
+import com.project.bank.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,10 +11,10 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class AuthorizationService implements UserDetailsService
 {
-    private final ClienteRepository clienteRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
     public UserDetails loadUserByUsername(String cpf) throws UsernameNotFoundException {
-        return clienteRepository.findByCpf(cpf);
+        return usuarioRepository.findByCpf(cpf);
     }
 }

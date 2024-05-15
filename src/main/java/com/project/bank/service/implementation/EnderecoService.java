@@ -2,14 +2,14 @@ package com.project.bank.service.implementation;
 
 import com.project.bank.entity.dto.EnderecoDto;
 import com.project.bank.entity.form.EnderecoForm;
-import com.project.bank.entity.model.Cliente;
 import com.project.bank.entity.model.Endereco;
+import com.project.bank.entity.model.Usuario;
 import com.project.bank.feign.EnderecoFeign;
 import com.project.bank.feign.response.EnderecoResponse;
 import com.project.bank.handler.BusinessException;
 import com.project.bank.handler.RegistroNaoEncontradoException;
-import com.project.bank.repository.ClienteRepository;
 import com.project.bank.repository.EnderecoRepository;
+import com.project.bank.repository.UsuarioRepository;
 import com.project.bank.service.repository.EnderecoServiceRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,14 +19,14 @@ import org.springframework.stereotype.Service;
 public class EnderecoService implements EnderecoServiceRep {
 
     private final EnderecoRepository enderecoRepository;
-    private final ClienteRepository clienteRepository;
+    private final UsuarioRepository usuarioRepository;
     private final EnderecoFeign enderecoFeign;
 
     @Override
     public Endereco cadastrarEndereco(EnderecoForm endereco)
     {
-        Cliente cliente = clienteRepository.findById(endereco.clienteId()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("cliente", endereco.clienteId())
+        Usuario cliente = usuarioRepository.findById(endereco.usuarioId()).orElseThrow(
+                () -> new RegistroNaoEncontradoException("cliente", endereco.usuarioId())
         );
 
         if(cliente.getEndereco() != null)
@@ -44,7 +44,7 @@ public class EnderecoService implements EnderecoServiceRep {
                 .logradouro(enderecoResponse.getLogradouro())
                 .numero(endereco.numero())
                 .complemento(endereco.complemento())
-                .cliente(cliente)
+                .usuario(cliente)
                 .build();
 
         return enderecoRepository.save(objConstruido);
@@ -52,7 +52,7 @@ public class EnderecoService implements EnderecoServiceRep {
 
     @Override
     public Endereco obterEnderecoPeloClienteId(String clienteId) {
-        Cliente cliente = clienteRepository.findById(clienteId).orElseThrow(
+        Usuario cliente = usuarioRepository.findById(clienteId).orElseThrow(
                 () -> new RegistroNaoEncontradoException("cliente", clienteId)
         );
 

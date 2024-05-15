@@ -2,8 +2,8 @@ package com.project.bank.entity.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.project.bank.enumerator.SolicitacaoConta;
-import com.project.bank.enumerator.UserRole;
+import com.project.bank.enumeration.SolicitacaoConta;
+import com.project.bank.enumeration.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,13 +14,13 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "tb_clientes")
+@Table(name = "tb_usuarios")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
-public class Cliente implements UserDetails {
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -47,7 +47,7 @@ public class Cliente implements UserDetails {
 
     //permite que a exclusão de um cliente remova registros de endereço, mas não o contrário
     //obs: essa config não criará uma chave estrangeira do lado do Cliente
-    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Endereco endereco;
 
@@ -58,8 +58,10 @@ public class Cliente implements UserDetails {
     @Builder.Default
     private UserRole role = UserRole.USER;
 
+    @Getter
     @Setter
     @Builder.Default
+    @Column(nullable = true)
     private SolicitacaoConta solicitacaoConta = SolicitacaoConta.PENDENTE;
 
     @Override
@@ -101,7 +103,7 @@ public class Cliente implements UserDetails {
 
     @Override
     public String toString() {
-        return "Cliente{" +
+        return "Usuario{" +
                 "id='" + id + '\'' +
                 ", primeiroNome='" + primeiroNome + '\'' +
                 ", sobrenome='" + sobrenome + '\'' +

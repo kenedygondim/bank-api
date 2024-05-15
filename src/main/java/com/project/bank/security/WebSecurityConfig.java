@@ -31,12 +31,12 @@ public class WebSecurityConfig
                 .authorizeHttpRequests(autorize -> autorize
                         .requestMatchers(HttpMethod.POST, "/bank/clientes/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/bank/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/bank/clientes").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/bank/usuarios").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "bank/conta/aprovarConta/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "bank/conta/reprovarConta").hasRole("admin")
+                        .requestMatchers(HttpMethod.DELETE, "bank/conta/reprovarConta/**").hasRole("admin")
                         .requestMatchers(HttpMethod.POST, "/bank/endereco").hasRole("user")
-                        .requestMatchers(HttpMethod.GET, "/bank/endereco/{clienteId}").hasRole("user")
-                        .requestMatchers(HttpMethod.GET, "/bank/clientes").hasRole("admin")
+                        .requestMatchers(HttpMethod.GET, "/bank/endereco/**").hasRole("user")
+                        .requestMatchers(HttpMethod.GET, "/bank/usuarios").hasRole("admin")
                         .anyRequest().authenticated()
                 )//quais endpoints serão autorizados
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) //antes de bloquear uma requisição, verificar o token

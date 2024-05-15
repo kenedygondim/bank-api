@@ -22,6 +22,7 @@ public class ContaController
     @DeleteMapping("/reprovarConta/{id}")
     public ResponseEntity<String> reprovarConta(@PathVariable("id") String id)
     {
+        contaService.reprovarConta(id);
         return ResponseEntity.ok("Conta reprovada com sucesso!");
     }
 }

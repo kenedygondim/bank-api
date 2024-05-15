@@ -3,21 +3,16 @@ package com.project.bank.service.implementation;
 import com.project.bank.email.EmailDto;
 import com.project.bank.email.EmailService;
 import com.project.bank.entity.dto.ContaDto;
-import com.project.bank.entity.model.Cliente;
+import com.project.bank.entity.model.Usuario;
 import com.project.bank.entity.model.Conta;
-import com.project.bank.enumerator.SolicitacaoConta;
-import com.project.bank.enumerator.StatusConta;
-import com.project.bank.enumerator.TipoConta;
-import com.project.bank.enumerator.UserRole;
+import com.project.bank.enumeration.SolicitacaoConta;
+import com.project.bank.enumeration.StatusConta;
+import com.project.bank.enumeration.TipoConta;
 import com.project.bank.handler.RegistroNaoEncontradoException;
-import com.project.bank.repository.ClienteRepository;
+import com.project.bank.repository.UsuarioRepository;
 import com.project.bank.repository.ContaRepository;
 import com.project.bank.service.repository.ContaServiceRep;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,14 +23,14 @@ import java.util.Random;
 public class ContaService implements ContaServiceRep {
 
     private final ContaRepository contaRepository;
-    private final ClienteRepository clienteRepository;
+    private final UsuarioRepository usuarioRepository;
     private final EmailService emailService;
 
 
     @Override
     public void aprovarConta(String id)
     {
-        Cliente cliente = clienteRepository.findById(id).orElseThrow(
+        Usuario cliente = usuarioRepository.findById(id).orElseThrow(
                 () -> new RegistroNaoEncontradoException("cliente", id)
         );
 
@@ -48,7 +43,7 @@ public class ContaService implements ContaServiceRep {
                 .tipoConta(TipoConta.CORRENTE)
                 .statusConta(StatusConta.ATIVA)
                 .saldo(0.0)
-                .cliente(cliente)
+                .usuario(cliente)
                 .dataCriacao(LocalDateTime.now())
                 .build();
 
@@ -60,11 +55,11 @@ public class ContaService implements ContaServiceRep {
     @Override
     public void reprovarConta(String id)
     {
-        Cliente cliente = clienteRepository.findById(id).orElseThrow(
+        Usuario cliente = usuarioRepository.findById(id).orElseThrow(
                 () -> new RegistroNaoEncontradoException("cliente", id)
         );
 
-        clienteRepository.deleteById(cliente.getId());
+        usuarioRepository.deleteById(cliente.getId());
     }
 
     @Override
@@ -101,10 +96,10 @@ public class ContaService implements ContaServiceRep {
                 EmailDto.builder()
                         .ownerRef("Bank")
                         .emailFrom("noreply-bank@gmail.com")
-                        .emailTo(contaCriada.getCliente().getEmail())
+                        .emailTo(contaCriada.getUsuario().getEmail())
                         .subject("Solicitação de conta")
                         .body(
-                                "Olá, " + contaCriada.getCliente().getPrimeiroNome() + "."
+                                "Olá, " + contaCriada.getUsuario().getPrimeiroNome() + "."
                                         + "\n\nSua solicitação de conta foi aprovada!"
                                         + "\n\nAcesse o aplicativo com seu CPF e senha cadastrados."
                                         + "\nConta: " + contaCriada.getNumConta()

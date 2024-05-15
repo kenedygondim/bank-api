@@ -1,4 +1,4 @@
-package com.project.bank.enumerator;
+package com.project.bank.enumeration;
 
 public enum SolicitacaoConta
 {

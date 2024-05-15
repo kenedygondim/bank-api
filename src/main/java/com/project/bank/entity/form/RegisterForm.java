@@ -1,7 +1,5 @@
 package com.project.bank.entity.form;
 
-import com.project.bank.enumerator.UserRole;
-
 public record RegisterForm
         (
                  String primeiroNome,

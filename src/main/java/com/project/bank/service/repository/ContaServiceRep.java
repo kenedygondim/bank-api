@@ -1,9 +1,7 @@
 package com.project.bank.service.repository;
 
 import com.project.bank.entity.dto.ContaDto;
-import com.project.bank.entity.model.Cliente;
 import com.project.bank.entity.model.Conta;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service

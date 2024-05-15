@@ -3,8 +3,6 @@ package com.project.bank.entity.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
 
 @Entity
 @Table(name = "tb_enderecos")
@@ -40,7 +38,7 @@ public class Endereco {
     private String complemento;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
     @JsonIgnore
-    private Cliente cliente;
+    private Usuario usuario;
 }

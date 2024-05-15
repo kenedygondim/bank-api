@@ -1,7 +1,5 @@
 package com.project.bank;
 
-import com.project.bank.entity.model.Cliente;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -10,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ClienteTeste
+public class UsuarioTeste
 {
     @Test
     void idadeDeveSer19Anos()
