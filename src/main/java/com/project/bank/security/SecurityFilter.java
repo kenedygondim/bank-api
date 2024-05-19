@@ -1,6 +1,6 @@
 package com.project.bank.security;
 
-import com.project.bank.repository.UsuarioRepository;
+import com.project.bank.repository.AcessoContaRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +19,7 @@ import java.io.IOException;
 public class SecurityFilter extends OncePerRequestFilter
 {
     private final TokenService tokenService;
-    private final UsuarioRepository usuarioRepository;
+    private final AcessoContaRepository acessoContaRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
@@ -27,9 +27,9 @@ public class SecurityFilter extends OncePerRequestFilter
         var token = this.recoverToken(request);
         if(token != null)
         {
-            var cpf = tokenService.validateToken(token);
-            UserDetails usuario = usuarioRepository.findByCpf(cpf);
-            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+            var login = tokenService.validateToken(token);
+            UserDetails acessoConta = acessoContaRepository.findByLogin(login);
+            var authentication = new UsernamePasswordAuthenticationToken(acessoConta, null, acessoConta.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);

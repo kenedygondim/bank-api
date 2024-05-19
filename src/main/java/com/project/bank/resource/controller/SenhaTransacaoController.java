@@ -7,6 +7,8 @@ import com.project.bank.service.implementation.SenhaTransacaoService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/bank/senhaTransacao")
 @AllArgsConstructor
@@ -15,13 +17,13 @@ public class SenhaTransacaoController
     private final SenhaTransacaoService senhaTransacaoService;
 
     @PostMapping
-    public SenhaTransacao cadastrarSenhaTransacao(@RequestBody SenhaTransacaoPostForm senhaTransacao)
+    public SenhaTransacao cadastrarSenhaTransacao(@RequestBody @Valid SenhaTransacaoPostForm senhaTransacao)
     {
         return senhaTransacaoService.cadastrarSenhaTransacao(senhaTransacao);
     }
 
     @PatchMapping
-    public SenhaTransacao atualizarSenhaTransacao(@RequestBody SenhaTransacaoPutForm senhaTransacao)
+    public SenhaTransacao atualizarSenhaTransacao(@RequestBody @Valid SenhaTransacaoPutForm senhaTransacao)
     {
         return senhaTransacaoService.atualizarSenhaTransacao(senhaTransacao);
     }

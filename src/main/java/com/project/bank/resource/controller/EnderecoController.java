@@ -6,6 +6,7 @@ import com.project.bank.service.implementation.EnderecoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @AllArgsConstructor
 @RestController
@@ -15,7 +16,7 @@ public class EnderecoController
     private final EnderecoService enderecoService;
 
     @PostMapping
-    public ResponseEntity<Endereco> cadastrarEndereco(@RequestBody EnderecoForm endereco)
+    public ResponseEntity<Endereco> cadastrarEndereco(@RequestBody @Valid EnderecoForm endereco)
     {
         return ResponseEntity.ok(enderecoService.cadastrarEndereco(endereco));
     }

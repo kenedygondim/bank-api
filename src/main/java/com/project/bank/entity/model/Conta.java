@@ -48,6 +48,12 @@ public class Conta {
     @JsonIgnore
     private Usuario usuario;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "acesso_conta_id", nullable = false)
+    @JsonIgnore
+    private AcessoConta acessoConta;
+
     @OneToOne(mappedBy = "conta")
     private SenhaTransacao senhaTransacao;
 }

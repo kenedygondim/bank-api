@@ -1,26 +1,16 @@
 package com.project.bank.entity.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.project.bank.enumeration.SolicitacaoConta;
-import com.project.bank.enumeration.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "tb_usuarios")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
-public class Usuario implements UserDetails {
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -51,56 +41,6 @@ public class Usuario implements UserDetails {
     @JsonIgnore
     private Endereco endereco;
 
-    @Column(name = "senha", nullable = false)
-    private String senhaAuth;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private UserRole role = UserRole.USER;
-
-    @Getter
-    @Setter
-    @Builder.Default
-    @Column(nullable = true)
-    private SolicitacaoConta solicitacaoConta = SolicitacaoConta.PENDENTE;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities()
-    {
-        if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
-    }
-
-    @Override
-    public String getPassword() {
-        return this.senhaAuth;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.cpf;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
     @Override
     public String toString() {
         return "Usuario{" +
@@ -112,8 +52,6 @@ public class Usuario implements UserDetails {
                 ", email='" + email + '\'' +
                 ", numeroTelefone='" + numeroTelefone + '\'' +
                 ", endereco=" + endereco +
-                ", senhaAuth='" + senhaAuth + '\'' +
-                ", solicitacaoConta=" + solicitacaoConta +
                 '}';
     }
 }

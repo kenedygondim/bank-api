@@ -1,13 +1,10 @@
 package com.project.bank.repository;
 
-import com.project.bank.entity.model.AcessoConta;
+import com.project.bank.entity.model.SolicitacaoConta;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AcessoContaRepository extends JpaRepository<AcessoConta, String>
-{
-    UserDetails findByLogin(String login);
-    AcessoConta findFirstByLogin(String login);
+public interface SolicitacaoContaRepository extends JpaRepository<SolicitacaoConta, String>{
+    Boolean existsByCpf(String cpf);
 }

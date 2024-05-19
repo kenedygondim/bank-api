@@ -1,5 +1,6 @@
 package com.project.bank.handler;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,8 @@ import java.lang.reflect.UndeclaredThrowableException;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
 {
+
+    @Autowired
     private MessageSource messageSource;
 
     //headers

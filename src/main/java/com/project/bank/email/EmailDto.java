@@ -1,8 +1,8 @@
 package com.project.bank.email;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import javax.validation.constraints.NotNull;
 
 @Data
 @Builder

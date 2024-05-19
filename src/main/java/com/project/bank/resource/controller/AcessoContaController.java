@@ -1,45 +1,38 @@
 package com.project.bank.resource.controller;
-
-import com.project.bank.entity.form.AuthForm;
-import com.project.bank.entity.model.Usuario;
-import com.project.bank.enumeration.SolicitacaoConta;
+import com.project.bank.entity.form.AcessoContaForm;
+import com.project.bank.entity.model.AcessoConta;
 import com.project.bank.handler.BusinessException;
-import com.project.bank.repository.UsuarioRepository;
+import com.project.bank.repository.AcessoContaRepository;
 import com.project.bank.security.TokenService;
-import com.project.bank.service.implementation.ContaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import javax.validation.Valid;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 @RestController
 @RequestMapping("bank/auth")
 @RequiredArgsConstructor
-public class AuthController
+public class AcessoContaController
 {
     private final AuthenticationManager authManager;
-    private final UsuarioRepository usuarioRepository;
-    private final ContaService contaService;
+    private final AcessoContaRepository acessoContaRepository;
     private final TokenService tokenService;
-
     @PostMapping("/login")
-    public ResponseEntity login (@RequestBody @Valid AuthForm form)
+    public ResponseEntity login (@RequestBody @Valid AcessoContaForm form)
     {
-        Usuario usuario = usuarioRepository.findFirstByCpf(form.cpf());
-
-        if(usuario == null)
-            throw new BusinessException("CPF inválido.");
-        if(usuario.getSolicitacaoConta() == SolicitacaoConta.PENDENTE || usuario.getSolicitacaoConta() == SolicitacaoConta.RECUSADA)
-            throw new BusinessException("Sua solicitação de conta está pendente ou foi recusada.");
-
-        var usuarioCredentials =  new UsernamePasswordAuthenticationToken(form.cpf(), form.senha());
-        var auth = authManager.authenticate(usuarioCredentials);
-        var token = tokenService.generateToken((Usuario) auth.getPrincipal());
+        AcessoConta acessoConta = acessoContaRepository.findFirstByLogin(form.login());
+        if(acessoConta == null)
+            throw new BusinessException("Login inválido.");
+        var acessoContaCredentials =  new UsernamePasswordAuthenticationToken(form.login(), form.senha());
+        var auth = authManager.authenticate(acessoContaCredentials);
+        var token = tokenService.generateToken((AcessoConta) auth.getPrincipal());
         return ResponseEntity.ok(token);
     }
 }

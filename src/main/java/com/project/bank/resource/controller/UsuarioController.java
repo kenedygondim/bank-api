@@ -1,13 +1,11 @@
 package com.project.bank.resource.controller;
 
-import com.project.bank.entity.form.RegisterForm;
 import com.project.bank.entity.model.Usuario;
 import com.project.bank.service.implementation.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -16,12 +14,6 @@ import java.util.List;
 public class UsuarioController
 {
     private final UsuarioService usuarioService;
-
-    @PostMapping("/auth/register")
-    public ResponseEntity<String> solicitarConta(@RequestBody @Valid RegisterForm formUsuario)
-    {
-        return ResponseEntity.ok("Conta solicitada com sucesso! Número da solicitação: " +  usuarioService.solicitarConta(formUsuario));
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> obterUsuario(@PathVariable("id") String id)

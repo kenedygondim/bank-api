@@ -1,6 +1,6 @@
 package com.project.bank.enumeration;
 
-public enum SolicitacaoConta
+public enum SolicitacaoContaEnum
 {
     PENDENTE("Pendente"),
     RECUSADA("Recusada"),
@@ -8,7 +8,7 @@ public enum SolicitacaoConta
 
     private final String solicitacao;
 
-    SolicitacaoConta(String solicitacao)
+    SolicitacaoContaEnum(String solicitacao)
     {
         this.solicitacao = solicitacao;
     }
