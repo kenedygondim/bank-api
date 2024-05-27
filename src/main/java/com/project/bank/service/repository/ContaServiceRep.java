@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ContaServiceRep
 {
-    void aprovarConta(String id);
-    void reprovarConta(String id);
-    Conta atualizarConta(ContaDto conta);
-    String excluirConta(long id);
+    String aprovarConta(String id);
+    String reprovarConta(String id);
 }

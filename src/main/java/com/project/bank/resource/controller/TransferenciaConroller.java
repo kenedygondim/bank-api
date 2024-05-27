@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -17,22 +19,19 @@ import java.util.List;
 public class TransferenciaConroller
 {
     private final TransferenciaService transferenciaService;
-
     @PostMapping
-    public ResponseEntity<TransferenciaDto> realizarTransferencia(@RequestBody @Valid TransferenciaForm transferencia)
+    public ResponseEntity<TransferenciaDto> realizarTransferencia(@RequestBody @Valid TransferenciaForm transferencia, Principal principal)
     {
-        return ResponseEntity.ok(transferenciaService.realizarTransferencia(transferencia));
+        return ResponseEntity.ok(transferenciaService.realizarTransferencia(transferencia, principal.getName()));
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<TransferenciaDto> obterTransferencia(@PathVariable("id") long id)
     {
         return ResponseEntity.ok(transferenciaService.obterTransferencia(id));
     }
-
-    @GetMapping("/{id}/all")
-    public ResponseEntity<List<TransferenciaDto>> obterTransferenciasCliente(@PathVariable("id") long id)
+    @GetMapping("/all")
+    public ResponseEntity<List<TransferenciaDto>> obterTransferenciasCliente(Principal principal)
     {
-        return ResponseEntity.ok(transferenciaService.obterTransferenciasCliente(id));
+        return ResponseEntity.ok(transferenciaService.obterTransferenciasCliente(principal.getName()));
     }
 }

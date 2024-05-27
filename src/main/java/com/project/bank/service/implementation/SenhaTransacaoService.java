@@ -18,11 +18,9 @@ public class SenhaTransacaoService implements SenhaTransacaoServiceRep
     private final SenhaTransacaoRepository senhaTransacaoRepository;
     private final ContaRepository contaRepository;
     @Override
-    public SenhaTransacao cadastrarSenhaTransacao(SenhaTransacaoPostForm senhaTransacao)
+    public SenhaTransacao cadastrarSenhaTransacao(SenhaTransacaoPostForm senhaTransacao, String cpf)
     {
-        Conta conta = contaRepository.findById(senhaTransacao.contaId()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("conta", senhaTransacao.contaId())
-        );
+        Conta conta = contaRepository.findContaByUsuarioCpf(cpf);
         if(conta.getSenhaTransacao() != null)
             throw new BusinessException("A conta já possui uma senha de transação cadastrada.");
         if(!senhaTransacao.senha().equals(senhaTransacao.confirmacaoSenha()))
@@ -36,11 +34,9 @@ public class SenhaTransacaoService implements SenhaTransacaoServiceRep
     }
 
     @Override
-    public SenhaTransacao atualizarSenhaTransacao(SenhaTransacaoPutForm senhaTransacao)
+    public SenhaTransacao atualizarSenhaTransacao(SenhaTransacaoPutForm senhaTransacao, String cpf)
     {
-        Conta conta = contaRepository.findById(senhaTransacao.contaId()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("conta", senhaTransacao.contaId())
-        );
+        Conta conta = contaRepository.findContaByUsuarioCpf(cpf);
         if(!new BCryptPasswordEncoder().matches(senhaTransacao.senhaAtual(), conta.getSenhaTransacao().getSenha()))
             throw new BusinessException("A senha atual não confere.");
         if(new BCryptPasswordEncoder().matches(senhaTransacao.novaSenha(), conta.getSenhaTransacao().getSenha()))

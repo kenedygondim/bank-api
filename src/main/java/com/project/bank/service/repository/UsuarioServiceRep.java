@@ -12,6 +12,4 @@ public interface UsuarioServiceRep
 {
     List<Usuario> obterUsuarios();
     Usuario obterUsuario(String id);
-    Usuario atualizarUsuario(UsuarioDto usuario);
-    String excluirUsuario(String id);
 }

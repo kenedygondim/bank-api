@@ -32,10 +32,8 @@ public class SolicitacaoContaService implements SolicitacaoContaRep
     {
         if (retornaIdadeUsuario(formSolicitacaoConta.dataNascimento()) < 18)
             throw new BusinessException("Usuários devem ser maiores de 18 anos.");
-
         verificaCamposExistentes(formSolicitacaoConta);
         verificaSolicitacaoExistente(formSolicitacaoConta.cpf());
-
         SolicitacaoConta solicitacaoContaBuilder =
                 SolicitacaoConta.builder()
                         .primeiroNome(formSolicitacaoConta.primeiroNome())
@@ -46,12 +44,11 @@ public class SolicitacaoContaService implements SolicitacaoContaRep
                         .numeroTelefone(formataNumeroTelefone(formSolicitacaoConta.numeroTelefone()))
                         .senhaAuth(new BCryptPasswordEncoder().encode(formSolicitacaoConta.senha()))
                         .build();
-
         try
         {
             SolicitacaoConta solicitacaoConta = solicitacaoContaRepository.save(solicitacaoContaBuilder);
             emailService.sendEmail(geraEmail(solicitacaoConta));
-            return solicitacaoConta.getId();
+            return "Conta solicitada com sucesso. Verifique seu email para mais informações.";
         } catch (Exception e)
         {
             throw new BusinessException("Erro ao solicitar conta.");

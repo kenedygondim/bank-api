@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface EnderecoServiceRep
 {
-    Endereco cadastrarEndereco(EnderecoForm endereco);
-    Endereco obterEnderecoPeloUsuarioId(String clienteId);
+    Endereco cadastrarEndereco(EnderecoForm endereco, String cpf);
+    Endereco obterEnderecoPeloCpf(String cpf);
     Endereco atualizarEndereco(EnderecoDto endereco);
     String excluirEndereco(long id);
 }

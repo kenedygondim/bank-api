@@ -14,13 +14,11 @@ public class ContaController
     @PostMapping("/aprovarConta/{id}")
     public ResponseEntity<String> aprovarConta(@PathVariable("id") String id)
     {
-        contaService.aprovarConta(id);
-        return ResponseEntity.ok("Conta aprovada com sucesso!");
+        return ResponseEntity.ok(contaService.aprovarConta(id));
     }
     @DeleteMapping("/reprovarConta/{id}")
     public ResponseEntity<String> reprovarConta(@PathVariable("id") String id)
     {
-        contaService.reprovarConta(id);
-        return ResponseEntity.ok("Conta reprovada com sucesso!");
+        return ResponseEntity.ok(contaService.reprovarConta(id));
     }
 }

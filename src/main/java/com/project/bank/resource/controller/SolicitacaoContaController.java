@@ -20,17 +20,9 @@ import java.util.Map;
 public class SolicitacaoContaController
 {
     private final SolicitacaoContaService solicitacaoContaService;
-
     @PostMapping
     public ResponseEntity<String> solicitarConta(@RequestBody @Valid SolicitacaoContaForm formUsuario)
     {
-        solicitacaoContaService.solicitarConta(formUsuario);
-        return ResponseEntity.ok("Conta solicitada com sucesso!");
+        return ResponseEntity.ok(solicitacaoContaService.solicitarConta(formUsuario));
     }
-
-    /*@PostMapping("/contaAdmin")
-    public void contaAdmin()
-    {
-        solicitacaoContaService.contaAdmin();
-    }*/
 }

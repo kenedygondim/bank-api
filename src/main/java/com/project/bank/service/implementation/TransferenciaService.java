@@ -31,14 +31,14 @@ public class TransferenciaService implements TransferenciaServiceRep
     private final ChavePixRepository chavePixRepository;
     @Override
     @Transactional
-    public TransferenciaDto realizarTransferencia(TransferenciaForm transferencia)
+    public TransferenciaDto realizarTransferencia(TransferenciaForm transferencia, String cpf)
     {
         ChavePix chave = chavePixRepository.findByChave(transferencia.chavePix()).orElseThrow(
                 () -> new RegistroNaoEncontradoException("chave PIX", transferencia.chavePix())
         );
-        Conta contaOrigem = contaRepository.findById(transferencia.contaOrigemId()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("conta", transferencia.contaOrigemId())
-        );
+        Conta contaOrigem = contaRepository.findContaByUsuarioCpf(cpf);
+        if (contaOrigem == null)
+            throw new RegistroNaoEncontradoException("conta", cpf);
         if(contaOrigem.getSenhaTransacao() == null)
             throw new BusinessException("Cadastre uma senha para transações.");
         if(transferencia.valor() > contaOrigem.getSaldo())
@@ -49,7 +49,7 @@ public class TransferenciaService implements TransferenciaServiceRep
             throw new BusinessException("Não é possível transferir a partir de uma conta-poupança");
         StatusConta statusContaDestino = chave.getConta().getStatusConta();
         if(statusContaDestino.equals(StatusConta.BLOQUEADA) || statusContaDestino.equals(StatusConta.INATIVA))
-            throw new BusinessException("Conta destino bloqueada no momento.");
+            throw new BusinessException("Conta destino bloqueada ou inativa no momento.");
         if(!new BCryptPasswordEncoder().matches(transferencia.senhaTransacao(), contaOrigem.getSenhaTransacao().getSenha()))
             throw new BusinessException("Senha incorreta.");
        Transferencia transferenciaBuilder =
@@ -74,11 +74,14 @@ public class TransferenciaService implements TransferenciaServiceRep
         return converteTransferenciaDto(transferencia);
     }
     @Override
-    public List<TransferenciaDto> obterTransferenciasCliente(long id)
+    public List<TransferenciaDto> obterTransferenciasCliente(String cpf)
     {
-        List<Transferencia> transfs = transferenciaRepository.findAllByRemetenteIdOrDestinatarioId(id);
-        return converteListaTransferenciaDto(transfs);
+        Conta conta = contaRepository.findContaByUsuarioCpf(cpf);
+        if (conta == null)
+            throw new RegistroNaoEncontradoException("conta", cpf);
+        return converteListaTransferenciaDto(transferenciaRepository.findAllByRemetenteIdOrDestinatarioId(conta.getId()));
     }
+
     public List<TransferenciaDto> converteListaTransferenciaDto(List<Transferencia> transferencias)
     {
         List<TransferenciaDto> transferenciasDto = new ArrayList<>();

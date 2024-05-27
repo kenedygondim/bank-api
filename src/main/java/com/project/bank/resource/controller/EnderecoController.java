@@ -8,22 +8,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import java.security.Principal;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/bank/endereco")
 public class EnderecoController
 {
     private final EnderecoService enderecoService;
-
     @PostMapping
-    public ResponseEntity<Endereco> cadastrarEndereco(@RequestBody @Valid EnderecoForm endereco)
+    public ResponseEntity<Endereco> cadastrarEndereco(@RequestBody @Valid EnderecoForm endereco, Principal principal)
     {
-        return ResponseEntity.ok(enderecoService.cadastrarEndereco(endereco));
+        return ResponseEntity.ok(enderecoService.cadastrarEndereco(endereco, principal.getName()));
     }
-
-    @GetMapping("/{usuarioId}")
-    public ResponseEntity<Endereco> obterEnderecoPeloUsuarioId(@PathVariable String usuarioId)
+    @GetMapping
+    public ResponseEntity<Endereco> obterEnderecoPeloCpf(Principal principal)
     {
-        return ResponseEntity.ok(enderecoService.obterEnderecoPeloUsuarioId(usuarioId));
+        return ResponseEntity.ok(enderecoService.obterEnderecoPeloCpf(principal.getName()));
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.security.Principal;
 import java.util.List;
 @RestController
 @RequestMapping("/bank/chavePix")
@@ -14,19 +16,19 @@ import java.util.List;
 public class ChavePixController
 {
     private final ChavePixService chavePixService;
-    @GetMapping("/{id}")
-    public ResponseEntity<List<ChavePix>> listarChavesPixConta(@PathVariable("id")long id)
+    @GetMapping
+    public ResponseEntity<List<ChavePix>> listarChavesPixConta(Principal principal)
     {
-        return ResponseEntity.ok(chavePixService.listarChavesPixConta(id));
+        return ResponseEntity.ok(chavePixService.listarChavesPixConta(principal.getName()));
     }
     @PostMapping
-    public ResponseEntity<ChavePix> cadastrarChavePix(@RequestBody @Valid ChavePixForm chavePix)
+    public ResponseEntity<ChavePix> cadastrarChavePix(@RequestBody @Valid ChavePixForm chavePix, Principal principal)
     {
-        return ResponseEntity.ok(chavePixService.cadastrarChavePix(chavePix));
+        return ResponseEntity.ok(chavePixService.cadastrarChavePix(chavePix, principal.getName()));
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> excluirChavePix(@PathVariable("id") long id){
-        chavePixService.excluirChavePix(id);
-        return ResponseEntity.ok("Chave PIX excluída");
+    @DeleteMapping("/excluir")
+    public ResponseEntity<String> excluirChavePix(@RequestBody @Valid ChavePixForm chavePix, Principal principal)
+    {
+        return ResponseEntity.ok(chavePixService.excluirChavePix(chavePix, principal.getName()));
     }
 }

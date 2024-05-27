@@ -24,16 +24,36 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable()) //a proteção csrf não precisa estar ativada em autenticações de API's REST baseadas em token
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //ativando autenticação stateless (baseada em tokens), sem guardar estado de sessões anteriores
                 .authorizeHttpRequests(autorize -> autorize
+                        //ALL
                         .requestMatchers(HttpMethod.POST, "/bank/solicitarConta").permitAll()
                         .requestMatchers(HttpMethod.POST, "/bank/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/bank/usuarios").hasRole("ADMIN")
+                        //ALL\\
+
+                        //USER
+                            //GET
+                            .requestMatchers(HttpMethod.GET, "/bank/usuarios").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/bank/endereco").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/bank/chavePix").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/bank/transferencias/**").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/bank/transferencias/all").hasRole("USER")
+                            //POST
+                            .requestMatchers(HttpMethod.POST, "/bank/endereco").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/bank/chavePix").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/bank/senhaTransacao").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/bank/transferencias").hasRole("USER")
+                            //PATCH
+                            .requestMatchers(HttpMethod.PATCH, "/bank/senhaTransacao").hasRole("USER")
+                            //DELETE
+                            .requestMatchers(HttpMethod.DELETE, "/bank/chavePix/excluir").hasRole("USER")
+                        //USER\\
+
+                        //ADMIN
+                        .requestMatchers(HttpMethod.GET, "/bank/usuarios/all").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "bank/conta/aprovarConta/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "bank/conta/reprovarConta/**").hasRole("admin")
-                        .requestMatchers(HttpMethod.POST, "/bank/endereco").hasRole("user")
-                        .requestMatchers(HttpMethod.GET, "/bank/endereco/**").hasRole("user")
-                        .requestMatchers(HttpMethod.GET, "/bank/usuarios").hasRole("admin")
+                        .requestMatchers(HttpMethod.DELETE, "bank/conta/reprovarConta/**").hasRole("ADMIN")
+                        //ADMIN\\
                         .anyRequest().authenticated()
-                )//quais endpoints serão autorizados
+                )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) //antes de bloquear uma requisição, verificar o token
                 .build();
     }

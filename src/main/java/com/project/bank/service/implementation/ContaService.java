@@ -28,7 +28,7 @@ public class ContaService implements ContaServiceRep {
     private final EmailService emailService;
     @Override
     @Transactional
-    public void aprovarConta(String solicitacaoId)
+    public String aprovarConta(String solicitacaoId)
     {
         SolicitacaoConta solicitacaoConta = solicitacaoContaRepository.findById(solicitacaoId).orElseThrow(
                 () -> new RegistroNaoEncontradoException("solicitação de conta", solicitacaoId)
@@ -61,23 +61,19 @@ public class ContaService implements ContaServiceRep {
         Conta contaCriada = contaRepository.save(contaBuilder);
         solicitacaoContaRepository.deleteById(solicitacaoConta.getId());
         emailService.sendEmail(geraEmail(contaCriada));
+
+        return "Conta aprovada com sucesso!";
     }
     @Override
-    public void reprovarConta(String solicitacaoId)
+    public String reprovarConta(String solicitacaoId)
     {
         SolicitacaoConta solicitacaoConta = solicitacaoContaRepository.findById(solicitacaoId).orElseThrow(
                 () -> new RegistroNaoEncontradoException("solicitação de conta", solicitacaoId)
         );
         solicitacaoContaRepository.deleteById(solicitacaoConta.getId());
+        return "Conta reprovada com sucesso!";
     }
-    @Override
-    public Conta atualizarConta(ContaDto conta) {
-        return null;
-    }
-    @Override
-    public String excluirConta(long id) {
-        return null;
-    }
+
     private String geraNumeroConta()
     {
         Random rand = new Random();

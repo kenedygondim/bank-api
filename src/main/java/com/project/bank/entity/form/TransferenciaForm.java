@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 
 public record TransferenciaForm
         (
-                @NotBlank(message = "Selecione a conta de origem.")
-                long contaOrigemId,
                 @NotBlank(message = "Insira a chave pix.")
                 String chavePix,
                 @NotBlank(message = "Selecione o valor.")

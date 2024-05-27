@@ -3,16 +3,20 @@ package com.project.bank.service.implementation;
 import com.project.bank.entity.form.ChavePixForm;
 import com.project.bank.entity.model.ChavePix;
 import com.project.bank.entity.model.Conta;
+import com.project.bank.entity.model.Usuario;
 import com.project.bank.enumeration.TipoChave;
 import com.project.bank.handler.BusinessException;
 import com.project.bank.handler.RegistroNaoEncontradoException;
 import com.project.bank.repository.ChavePixRepository;
 import com.project.bank.repository.ContaRepository;
+import com.project.bank.repository.UsuarioRepository;
 import com.project.bank.service.repository.ChavePixServiceRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @RequiredArgsConstructor
@@ -21,22 +25,16 @@ public class ChavePixService implements ChavePixServiceRep
 {
     private final ChavePixRepository chavePixRepository;
     private final ContaRepository contaRepository;
-
     @Override
-    public ChavePix cadastrarChavePix(ChavePixForm chavePix)
+    public ChavePix cadastrarChavePix(ChavePixForm chavePix, String cpf)
     {
-        Conta conta = contaRepository.findById(chavePix.contaId()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("conta", chavePix.contaId())
-        );
-
-        List<ChavePix> chavesPix = listarChavesPixConta(chavePix.contaId());
-
+        Conta conta = contaRepository.findContaByUsuarioCpf(cpf);
+        List<ChavePix> chavesPix = chavePixRepository.findAllByContaId(conta.getId());
         for (ChavePix pix : chavesPix)
         {
             if (pix.getTipoChave().equals(chavePix.tipoChave()))
                 throw new BusinessException("Você já cadastrou uma chave pix para este tipo");
         }
-
         ChavePix objConstruido =
                 ChavePix.builder()
                         .tipoChave(chavePix.tipoChave())
@@ -47,23 +45,34 @@ public class ChavePixService implements ChavePixServiceRep
         chavePixRepository.save(objConstruido);
         return objConstruido;
     }
-
     @Override
-    public List<ChavePix> listarChavesPixConta(long id)
+    public List<ChavePix> listarChavesPixConta(String cpf)
     {
-        return chavePixRepository.findAllByContaId(id).orElseThrow
-                ( () ->
-                {
-                    throw new RegistroNaoEncontradoException("conta", id);
-                }
-        );
+        Conta conta = contaRepository.findContaByUsuarioCpf(cpf);
+        if (conta == null)
+            throw new RegistroNaoEncontradoException("conta", cpf);
+        List<ChavePix> chavesPix = chavePixRepository.findAllByContaId(conta.getId());
+        if (chavesPix.isEmpty())
+            throw new BusinessException("Nenhuma chave pix encontrada");
+        return chavesPix;
     }
-
     @Override
-    public void excluirChavePix(long id) {
-        chavePixRepository.deleteById(id);
+    public String excluirChavePix(ChavePixForm chavePixForm, String cpf)
+    {
+        Conta conta = contaRepository.findContaByUsuarioCpf(cpf);
+        if (conta == null)
+            throw new RegistroNaoEncontradoException("conta", cpf);
+        List<ChavePix> chavesPix = chavePixRepository.findAllByContaId(conta.getId());
+        for(ChavePix chavePix : chavesPix)
+        {
+            if(chavePix.getTipoChave().equals(chavePixForm.tipoChave()))
+            {
+                chavePixRepository.delete(chavePix);
+                return "Chave pix excluída com sucesso";
+            }
+        }
+        throw new BusinessException("Chave pix não encontrada");
     }
-
     private String converteEnumEmString(Conta conta, TipoChave tipoChave)
     {
         String temp;
@@ -77,7 +86,6 @@ public class ChavePixService implements ChavePixServiceRep
         };
         return temp;
     }
-
     private String geraChaveAleatoria()
     {
         Random rand = new Random();

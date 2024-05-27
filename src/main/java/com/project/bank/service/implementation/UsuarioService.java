@@ -26,31 +26,14 @@ import java.util.List;
 public class UsuarioService implements UsuarioServiceRep
 {
     private final UsuarioRepository usuarioRepository;
-
     @Override
     public List<Usuario> obterUsuarios()
     {
         return usuarioRepository.findAll();
     }
-
     @Override
-    public Usuario obterUsuario(String id)
+    public Usuario obterUsuario(String cpf)
     {
-        return usuarioRepository.findById(id).orElseThrow(
-                () -> new RegistroNaoEncontradoException("usuário", id)
-        );
-    }
-
-    @Override
-    public Usuario atualizarUsuario(UsuarioDto Usuario)
-    {
-        return null;
-    }
-
-    @Override
-    public String excluirUsuario(String id)
-    {
-        usuarioRepository.deleteById(id);
-        return "Usuario excluído com sucesso!";
+        return usuarioRepository.findByCpf(cpf);
     }
 }

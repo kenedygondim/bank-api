@@ -7,7 +7,5 @@ public record SenhaTransacaoPutForm
                 @NotBlank(message = "O campo de senha atual não pode estar vazio.")
                 String senhaAtual,
                 @NotBlank(message = "O campo de nova senha não pode estar vazio.")
-                String novaSenha,
-                @NotBlank(message = "Selecione a conta na qual a senha está associada.")
-                long contaId
+                String novaSenha
         ) { }

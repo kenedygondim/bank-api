@@ -9,7 +9,5 @@ public record SenhaTransacaoPostForm
                 @Pattern(regexp = "^[0-9]{6}$", message = "O campo deve ser composto apenas por 6 números.")
                 String senha,
                 @NotBlank(message = "O campo de confirmação de senha não pode estar vazio.")
-                String confirmacaoSenha,
-                @NotBlank(message = "Selecione a conta na qual a senha está associada.")
-                long contaId
+                String confirmacaoSenha
         ) { }

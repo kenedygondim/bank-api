@@ -8,7 +8,5 @@ public record EnderecoForm
              String cep,
              @NotBlank(message = "O número da casa não pode estar vazio.")
              String numero,
-             String complemento,
-             @NotBlank(message = "O id do usuário não pode ser nulo.")
-             String usuarioId
+             String complemento
         ) { }

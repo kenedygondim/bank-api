@@ -13,7 +13,8 @@ public enum TipoChave
         this.tipoChave = tipoChave;
     }
 
-    public String getCodigo() {
+    public String getTipoChave()
+    {
         return tipoChave;
     }
 }

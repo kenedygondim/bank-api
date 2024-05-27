@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public interface TransferenciaServiceRep
 {
-    TransferenciaDto realizarTransferencia(TransferenciaForm transferencia);
+    TransferenciaDto realizarTransferencia(TransferenciaForm transferencia, String cpf);
     TransferenciaDto obterTransferencia(long id);
-    List<TransferenciaDto> obterTransferenciasCliente(long id);
+    List<TransferenciaDto> obterTransferenciasCliente(String cpf);
 }

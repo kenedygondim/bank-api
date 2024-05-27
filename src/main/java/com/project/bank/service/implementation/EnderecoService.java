@@ -23,19 +23,16 @@ public class EnderecoService implements EnderecoServiceRep {
     private final EnderecoFeign enderecoFeign;
 
     @Override
-    public Endereco cadastrarEndereco(EnderecoForm endereco)
+    public Endereco cadastrarEndereco(EnderecoForm endereco, String cpf)
     {
-        Usuario usuario = usuarioRepository.findById(endereco.usuarioId()).orElseThrow(
-                () -> new RegistroNaoEncontradoException("usuario", endereco.usuarioId())
-        );
-
+        Usuario usuario = usuarioRepository.findByCpf(cpf);
+        if(usuario == null)
+            throw new RegistroNaoEncontradoException("usuario", cpf);
         if(usuario.getEndereco() != null)
             throw new BusinessException("O usuario já possui um endereço cadastrado.");
-
         EnderecoResponse enderecoResponse = enderecoFeign.buscaEnderecoCep(endereco.cep()).orElseThrow(
                 () -> new BusinessException("CEP não encontrado.")
         );
-
         Endereco objConstruido = Endereco.builder()
                 .cep(enderecoResponse.getCep())
                 .uf(enderecoResponse.getUf())
@@ -51,14 +48,13 @@ public class EnderecoService implements EnderecoServiceRep {
     }
 
     @Override
-    public Endereco obterEnderecoPeloUsuarioId(String usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(
-                () -> new RegistroNaoEncontradoException("usuario", usuarioId)
-        );
-
-        if(usuario.getEndereco() == null)
-            throw new BusinessException("O usuario não possui endereço cadastrado.");
-
+    public Endereco obterEnderecoPeloCpf(String cpf)
+    {
+        Usuario usuario = usuarioRepository.findByCpf(cpf);
+        if(usuario == null)
+            throw new RegistroNaoEncontradoException("usuario", cpf);
+        if (usuario.getEndereco() == null)
+            throw new BusinessException("O usuario não possui um endereço cadastrado.");
         return usuario.getEndereco();
     }
 
