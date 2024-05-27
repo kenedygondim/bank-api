@@ -10,9 +10,10 @@ O principal motivo da criação desse serviço foi a necessidade de aprimorar me
 
 ## Instrução de instalação
 
-### Pré-requisito
+### Pré-requisitos
 - Java 17
 - MySQL
+- Postman
 - Chave do gmail para aplicações externas
 - Arquivo application.properties com as seguintes propriedades:
 ```
@@ -49,3 +50,132 @@ bank\target\classes
 ---
 ## Instruções de uso
 
+A api possui endpoints que podem ser acessados por usuários comuns, administradores e pelo público geral.
+
+Para acessar os endpoints com permissão de administrador ou usuário, é necessário enviar o token de autenticação (Após realizar o login) no cabeçalho da requisição.
+E como podemos fazer isso por meio do Postman?
+
+Adicione método HTTP desejado, o endpoint e clique na aba Authorization. Selecione Bearer Token e cole o token recebido no login, conforme imagem abaixo:
+
+![img_1.png](img_1.png)
+
+Lembrando que esse processo deve ser feito em todas as requisições que necessitam do usuário/administrados estar autenticado.
+
+
+### Público geral
+
+Qualquer pessoa pode enviar requisições para os relacionados a solicitação de conta e login.
+
+***
+
+#### 1 - Solicitação de conta:
+
+- Método HTTP: POST.
+- Endpoint:
+```
+localhost:8080/bank/solicitarConta
+```
+- Corpo da requisição:
+```json
+{
+    "primeiroNome" : "",
+    "sobrenome" : "",
+    "cpf": "",
+    "dataNascimento": "",
+    "email":"",
+    "numeroTelefone": "",
+    "senha": ""
+}
+```
+*** 
+
+#### 2 - Login:
+
+Em caso de aprovação do cadastro, o usuário pode fazer login com o cpf e senha cadastrada.
+- Método HTTP: POST.
+- Endpoint:
+```
+localhost:8080/bank/auth/login
+```
+- Corpo da requisição:
+```json
+{
+    "login": "",
+    "senha": ""
+}
+```
+Ao realizar o login, o usuário receberá um token de autenticação que deve ser enviado no cabeçalho das próximas requisições.
+ 
+### Usuários cadastrados no sistema 
+
+Os usuários cadastrados no sistema são os usuários que já realizaram o cadastro inicial e tiveram seus dados aprovados pelos admnistradores.
+
+***
+#### 3 - Cadastro de endereço:
+- Método HTTP: POST.
+- Endpoint:
+```
+localhost:8080/bank/endereco
+```
+- Corpo da requisição:
+```json
+{
+    "cep": "",
+    "casa": "",
+    "complemento": ""
+}
+```
+___Obs: O campo de complemento é opcional.___
+*** 
+#### 4 - Cadastro de senha para transações:
+
+O usuário deve cadastrar uma senha para realizar transferências.
+
+- Método HTTP: POST.
+- Endpoint:
+```
+localhost:8080/bank/senhaTransacao
+```
+- Corpo da requisição:
+```json
+{
+    "senha": "",
+    "confirmacaoSenha": ""
+}
+```
+*** 
+
+#### 5 - Cadastro de chaves PIX:
+
+O usuário pode cadastrar chaves PIX para receber transferências de outros usuários.
+
+- Método HTTP: POST.
+- Endpoint:
+```
+localhost:8080/bank/chavesPix
+```
+- Corpo da requisição:
+```json
+{
+    "tipoChave": ""
+}
+```
+Escolha entre as opções CPF,EMAIL,NUMERO_TELEFONE ou ALEATORIA. As chaves aleatórias são geradas automaticamente pelo sistema e as demais de acordo com as informações do usuário.
+
+*** 
+
+#### 6 - Realizar transferência:
+- Método HTTP: POST.
+- Endpoint:
+```
+localhost:8080/bank/transferencias
+```
+- Corpo da requisição:
+```json
+{
+    "chavePix": "",
+    "valor": 0.0
+}
+```
+***
+Continua...
