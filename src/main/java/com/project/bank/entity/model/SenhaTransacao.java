@@ -15,7 +15,7 @@ public class SenhaTransacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, length = 6) //Por enquanto vai ser uma senha simples de 6 digitos
+    @Column(nullable = false, length = 150) //Por enquanto vai ser uma senha simples de 6 digitos
     private String senha;
 
     @OneToOne

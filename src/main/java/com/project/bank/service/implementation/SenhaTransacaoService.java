@@ -9,16 +9,20 @@ import com.project.bank.repository.ContaRepository;
 import com.project.bank.repository.SenhaTransacaoRepository;
 import com.project.bank.service.repository.SenhaTransacaoServiceRep;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class SenhaTransacaoService implements SenhaTransacaoServiceRep
 {
-    private final SenhaTransacaoRepository senhaTransacaoRepository;
-    private final ContaRepository contaRepository;
+    @Autowired
+    private SenhaTransacaoRepository senhaTransacaoRepository;
+    @Autowired
+    private ContaRepository contaRepository;
+
     @Override
-    public SenhaTransacao cadastrarSenhaTransacao(SenhaTransacaoPostForm senhaTransacao, String cpf)
+    public String cadastrarSenhaTransacao(SenhaTransacaoPostForm senhaTransacao, String cpf)
     {
         Conta conta = contaRepository.findContaByUsuarioCpf(cpf);
         if(conta.getSenhaTransacao() != null)
@@ -30,7 +34,9 @@ public class SenhaTransacaoService implements SenhaTransacaoServiceRep
                         .senha(new BCryptPasswordEncoder().encode(senhaTransacao.senha()))
                         .conta(conta)
                         .build();
-        return senhaTransacaoRepository.save(objConstruido);
+        senhaTransacaoRepository.save(objConstruido);
+
+        return "Senha criada com sucesso!";
     }
 
     @Override

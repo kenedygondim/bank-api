@@ -16,10 +16,8 @@ import java.lang.reflect.UndeclaredThrowableException;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
 {
-
     @Autowired
     private MessageSource messageSource;
-
     //headers
     private HttpHeaders headers()
     {
@@ -27,7 +25,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
     }
-
 
     private ResponseError responseError(String message, HttpStatus statusCode)
     {
@@ -54,8 +51,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
         }
     }
 
-    @ExceptionHandler({BusinessException.class})
+    @ExceptionHandler(BusinessException.class)
     private ResponseEntity<Object> handleBusinessException(BusinessException ex, WebRequest req)
+    {
+        ResponseError responseError = responseError(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return handleExceptionInternal(ex, responseError, headers(), HttpStatus.BAD_REQUEST, req);
+    }
+
+    @ExceptionHandler(RegistroNaoEncontradoException.class)
+    private ResponseEntity<Object> handleRegistroNaoEncontradoException(RegistroNaoEncontradoException ex, WebRequest req)
+    {
+        ResponseError responseError = responseError(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return handleExceptionInternal(ex, responseError, headers(), HttpStatus.NOT_FOUND, req);
+    }
+
+    @ExceptionHandler(RegistroDuplicadoException.class)
+    private ResponseEntity<Object> handleRegistroDuplicadoException(RegistroDuplicadoException ex, WebRequest req)
     {
         ResponseError responseError = responseError(ex.getMessage(), HttpStatus.CONFLICT);
         return handleExceptionInternal(ex, responseError, headers(), HttpStatus.CONFLICT, req);

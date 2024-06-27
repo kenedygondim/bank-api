@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface SenhaTransacaoServiceRep
 {
-    SenhaTransacao cadastrarSenhaTransacao(SenhaTransacaoPostForm senhaTransacao, String cpf);
+    String cadastrarSenhaTransacao(SenhaTransacaoPostForm senhaTransacao, String cpf);
     SenhaTransacao atualizarSenhaTransacao(SenhaTransacaoPutForm senhaTransacao, String cpf);
 }

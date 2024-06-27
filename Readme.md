@@ -43,7 +43,7 @@ git clone https://github.com/kenedygondim/bank-api.git
 3. Entre no arquivo pom.xml e recarregue as dependências do Maven
 4. Crie o arquivo application.properties no caminho 
 ``` 
-bank\target\classes
+bank\src\main\resources
 ```
 5. Adicione as propriedades citadas nos pré-requisitos com as informações do seu banco de dados e do seu gmail.
 7. Execute a aplicação

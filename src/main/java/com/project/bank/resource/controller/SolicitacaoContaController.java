@@ -1,28 +1,37 @@
 package com.project.bank.resource.controller;
 
+import com.project.bank.entity.dto.SolicitacaoContaDto;
 import com.project.bank.entity.form.SolicitacaoContaForm;
 import com.project.bank.service.implementation.SolicitacaoContaService;
-import com.project.bank.service.implementation.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @RestController
-@RequestMapping("/bank/solicitarConta")
+@RequestMapping("/bank/solicitacaoConta")
 @RequiredArgsConstructor
 public class SolicitacaoContaController
 {
-    private final SolicitacaoContaService solicitacaoContaService;
+    @Autowired
+    private SolicitacaoContaService solicitacaoContaService;
+
     @PostMapping
     public ResponseEntity<String> solicitarConta(@RequestBody @Valid SolicitacaoContaForm formUsuario)
     {
         return ResponseEntity.ok(solicitacaoContaService.solicitarConta(formUsuario));
     }
+    @GetMapping("/solicitacoes")
+    public ResponseEntity<List<SolicitacaoContaDto>> obterSolicitacoes()
+    {
+        return ResponseEntity.ok(solicitacaoContaService.obterSolicitacoes());
+    }
+    /*@PostMapping("/contaAdmin")
+    public void contaAdmin()
+    {
+        solicitacaoContaService.contaAdmin();
+    }*/
 }

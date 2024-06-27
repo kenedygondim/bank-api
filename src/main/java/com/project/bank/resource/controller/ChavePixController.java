@@ -3,6 +3,7 @@ import com.project.bank.entity.form.ChavePixForm;
 import com.project.bank.entity.model.ChavePix;
 import com.project.bank.service.implementation.ChavePixService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChavePixController
 {
-    private final ChavePixService chavePixService;
+    @Autowired
+    private ChavePixService chavePixService;
     @GetMapping
     public ResponseEntity<List<ChavePix>> listarChavesPixConta(Principal principal)
     {

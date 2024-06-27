@@ -16,6 +16,7 @@ import com.project.bank.repository.SolicitacaoContaRepository;
 import com.project.bank.service.repository.ContaServiceRep;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,9 +24,12 @@ import java.util.Random;
 @RequiredArgsConstructor
 @Service
 public class ContaService implements ContaServiceRep {
-    private final ContaRepository contaRepository;
-    private final SolicitacaoContaRepository solicitacaoContaRepository;
-    private final EmailService emailService;
+    @Autowired
+    private ContaRepository contaRepository;
+    @Autowired
+    private SolicitacaoContaRepository solicitacaoContaRepository;
+    @Autowired
+    private EmailService emailService;
     @Override
     @Transactional
     public String aprovarConta(String solicitacaoId)
@@ -33,7 +37,9 @@ public class ContaService implements ContaServiceRep {
         SolicitacaoConta solicitacaoConta = solicitacaoContaRepository.findById(solicitacaoId).orElseThrow(
                 () -> new RegistroNaoEncontradoException("solicitação de conta", solicitacaoId)
         );
+
        solicitacaoConta.setSolicitacaoContaEnum(SolicitacaoContaEnum.APROVADA);
+
        Usuario usuario = Usuario.builder()
                     .primeiroNome(solicitacaoConta.getPrimeiroNome())
                     .sobrenome(solicitacaoConta.getSobrenome())

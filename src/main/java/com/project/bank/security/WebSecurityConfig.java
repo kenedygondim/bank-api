@@ -25,8 +25,9 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //ativando autenticação stateless (baseada em tokens), sem guardar estado de sessões anteriores
                 .authorizeHttpRequests(autorize -> autorize
                         //ALL
-                        .requestMatchers(HttpMethod.POST, "/bank/solicitarConta").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/bank/solicitacaoConta").permitAll()
                         .requestMatchers(HttpMethod.POST, "/bank/auth/login").permitAll()
+                        //.requestMatchers(HttpMethod.POST, "/bank/solicitarConta/contaAdmin").permitAll()
                         //ALL\\
 
                         //USER
@@ -49,6 +50,7 @@ public class WebSecurityConfig {
 
                         //ADMIN
                         .requestMatchers(HttpMethod.GET, "/bank/usuarios/all").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/bank/solicitacaoConta/solicitacoes").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "bank/conta/aprovarConta/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "bank/conta/reprovarConta/**").hasRole("ADMIN")
                         //ADMIN\\

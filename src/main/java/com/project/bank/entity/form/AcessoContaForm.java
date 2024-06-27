@@ -1,5 +1,4 @@
 package com.project.bank.entity.form;
-
 import jakarta.validation.constraints.NotBlank;
 
 public record AcessoContaForm

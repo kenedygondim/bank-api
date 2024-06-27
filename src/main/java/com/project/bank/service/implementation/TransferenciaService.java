@@ -16,6 +16,7 @@ import com.project.bank.service.repository.TransferenciaServiceRep;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +27,12 @@ import java.util.List;
 @Service
 public class TransferenciaService implements TransferenciaServiceRep
 {
-    private final TransferenciaRepository transferenciaRepository;
-    private final ContaRepository contaRepository;
-    private final ChavePixRepository chavePixRepository;
+    @Autowired
+    private TransferenciaRepository transferenciaRepository;
+    @Autowired
+    private ContaRepository contaRepository;
+    @Autowired
+    private ChavePixRepository chavePixRepository;
     @Override
     @Transactional
     public TransferenciaDto realizarTransferencia(TransferenciaForm transferencia, String cpf)

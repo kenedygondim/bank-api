@@ -4,6 +4,7 @@ import com.project.bank.entity.form.EnderecoForm;
 import com.project.bank.entity.model.Endereco;
 import com.project.bank.service.implementation.EnderecoService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -15,7 +16,8 @@ import java.security.Principal;
 @RequestMapping("/bank/endereco")
 public class EnderecoController
 {
-    private final EnderecoService enderecoService;
+    @Autowired
+    private EnderecoService enderecoService;
     @PostMapping
     public ResponseEntity<Endereco> cadastrarEndereco(@RequestBody @Valid EnderecoForm endereco, Principal principal)
     {

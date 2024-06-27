@@ -5,6 +5,7 @@ import com.project.bank.entity.form.TransferenciaForm;
 import com.project.bank.entity.model.Transferencia;
 import com.project.bank.service.implementation.TransferenciaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransferenciaConroller
 {
-    private final TransferenciaService transferenciaService;
+    @Autowired
+    private TransferenciaService transferenciaService;
     @PostMapping
     public ResponseEntity<TransferenciaDto> realizarTransferencia(@RequestBody @Valid TransferenciaForm transferencia, Principal principal)
     {

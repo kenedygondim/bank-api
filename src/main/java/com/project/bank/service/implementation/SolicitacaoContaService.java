@@ -1,17 +1,20 @@
 package com.project.bank.service.implementation;
+
 import com.project.bank.email.EmailDto;
 import com.project.bank.email.EmailService;
+import com.project.bank.entity.dto.SolicitacaoContaDto;
 import com.project.bank.entity.form.SolicitacaoContaForm;
-import com.project.bank.entity.model.AcessoConta;
 import com.project.bank.entity.model.SolicitacaoConta;
-import com.project.bank.enumeration.UserRole;
 import com.project.bank.handler.BusinessException;
+import com.project.bank.handler.RegistroDuplicadoException;
 import com.project.bank.repository.AcessoContaRepository;
 import com.project.bank.repository.SolicitacaoContaRepository;
 import com.project.bank.repository.UsuarioRepository;
 import com.project.bank.service.repository.SolicitacaoContaRep;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +22,22 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SolicitacaoContaService implements SolicitacaoContaRep
 {
-    private final EmailService emailService;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
     private final SolicitacaoContaRepository solicitacaoContaRepository;
+    @Autowired
     private final UsuarioRepository usuarioRepository;
+
     @Override
     @Transactional
     public String solicitarConta(SolicitacaoContaForm formSolicitacaoConta)
@@ -54,6 +66,25 @@ public class SolicitacaoContaService implements SolicitacaoContaRep
             throw new BusinessException("Erro ao solicitar conta.");
         }
     }
+    @Override
+    public List<SolicitacaoContaDto> obterSolicitacoes() {
+        List<SolicitacaoConta> solicitacoes = solicitacaoContaRepository.findAll();
+        List<SolicitacaoContaDto> solicitacoesDto = new ArrayList<>();
+        for(SolicitacaoConta solicitacao : solicitacoes)
+        {
+            solicitacoesDto.add(modelMapper.map(solicitacao, SolicitacaoContaDto.class));
+        }
+        return solicitacoesDto;
+    }
+    /*@Override
+    public void contaAdmin() {
+        AcessoConta acessoConta = AcessoConta.builder()
+                .login("admin")
+                .senhaAuth(new BCryptPasswordEncoder().encode("admin"))
+                .role(UserRole.ADMIN)
+                .build();
+        acessoContaRepository.save(acessoConta);
+    }*/
     private String formataNumeroTelefone(String numeroTelefone)
     {
         return numeroTelefone.replaceAll("[^0-9]", "");
@@ -61,11 +92,11 @@ public class SolicitacaoContaService implements SolicitacaoContaRep
     private void verificaCamposExistentes(SolicitacaoContaForm formSolicitacaoConta)
     {
         if (usuarioRepository.existsByCpf(formSolicitacaoConta.cpf()))
-            throw new BusinessException("CPF já cadastrado.");
+            throw new RegistroDuplicadoException("CPF");
         if (usuarioRepository.existsByEmail(formSolicitacaoConta.email()))
-            throw new BusinessException("Email já cadastrado.");
+            throw new RegistroDuplicadoException("email");
         if (usuarioRepository.existsByNumeroTelefone(formSolicitacaoConta.numeroTelefone()))
-            throw new BusinessException("Número de telefone já cadastrado.");
+            throw new RegistroDuplicadoException("número de telefone");
     }
     private void verificaSolicitacaoExistente(String cpf)
     {
@@ -100,4 +131,6 @@ public class SolicitacaoContaService implements SolicitacaoContaRep
                                         + "\n\nAtenciosamente, equipe Bank.")
                         .build();
     }
+
+
 }

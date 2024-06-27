@@ -1,6 +1,7 @@
 package com.project.bank.resource.controller;
 import com.project.bank.service.implementation.ContaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ContaController
 {
-    private final ContaService contaService;
+    @Autowired
+    private ContaService contaService;
     @PostMapping("/aprovarConta/{id}")
     public ResponseEntity<String> aprovarConta(@PathVariable("id") String id)
     {

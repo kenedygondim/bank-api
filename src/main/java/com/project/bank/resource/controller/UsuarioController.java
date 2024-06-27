@@ -2,6 +2,7 @@ package com.project.bank.resource.controller;
 import com.project.bank.entity.model.Usuario;
 import com.project.bank.service.implementation.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UsuarioController
 {
-    private final UsuarioService usuarioService;
+    @Autowired
+    private UsuarioService usuarioService;
     @GetMapping
     public ResponseEntity<Usuario> obterUsuario(Principal principal)
     {

@@ -12,15 +12,18 @@ import com.project.bank.repository.EnderecoRepository;
 import com.project.bank.repository.UsuarioRepository;
 import com.project.bank.service.repository.EnderecoServiceRep;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class EnderecoService implements EnderecoServiceRep {
-
-    private final EnderecoRepository enderecoRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final EnderecoFeign enderecoFeign;
+    @Autowired
+    private EnderecoRepository enderecoRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private EnderecoFeign enderecoFeign;
 
     @Override
     public Endereco cadastrarEndereco(EnderecoForm endereco, String cpf)

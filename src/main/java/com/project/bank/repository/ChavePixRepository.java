@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface ChavePixRepository extends JpaRepository<ChavePix, Long>
 {
-    @Query("select cp from ChavePix cp inner join cp.conta on cp.conta.id = :id")
-    List<ChavePix> findAllByContaId(Long id);
+    @Query("SELECT p FROM ChavePix p JOIN p.conta c JOIN c.usuario u WHERE u.cpf = :cpf")
+    List<ChavePix> findAllByUsuarioCpf(String cpf);
     Optional<ChavePix> findByChave(String chave);
 }
