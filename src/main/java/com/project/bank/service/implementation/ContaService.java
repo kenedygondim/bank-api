@@ -11,6 +11,7 @@ import com.project.bank.enumeration.StatusConta;
 import com.project.bank.enumeration.TipoConta;
 import com.project.bank.enumeration.UserRole;
 import com.project.bank.handler.RegistroNaoEncontradoException;
+import com.project.bank.repository.AcessoContaRepository;
 import com.project.bank.repository.ContaRepository;
 import com.project.bank.repository.SolicitacaoContaRepository;
 import com.project.bank.service.repository.ContaServiceRep;
@@ -27,77 +28,83 @@ public class ContaService implements ContaServiceRep {
     @Autowired
     private ContaRepository contaRepository;
     @Autowired
-    private SolicitacaoContaRepository solicitacaoContaRepository;
+    private SolicitacaoContaService solicitacaoContaService;
     @Autowired
     private EmailService emailService;
+
     @Override
     @Transactional
     public String aprovarConta(String solicitacaoId)
     {
-        SolicitacaoConta solicitacaoConta = solicitacaoContaRepository.findById(solicitacaoId).orElseThrow(
-                () -> new RegistroNaoEncontradoException("solicitação de conta", solicitacaoId)
-        );
-
-       solicitacaoConta.setSolicitacaoContaEnum(SolicitacaoContaEnum.APROVADA);
-
-       Usuario usuario = Usuario.builder()
-                    .primeiroNome(solicitacaoConta.getPrimeiroNome())
-                    .sobrenome(solicitacaoConta.getSobrenome())
-                    .cpf(solicitacaoConta.getCpf())
-                    .dataNascimento(solicitacaoConta.getDataNascimento())
-                    .email(solicitacaoConta.getEmail())
-                    .numeroTelefone(solicitacaoConta.getNumeroTelefone())
-                    .build();
-        AcessoConta acessoConta = AcessoConta.builder()
-                .login(solicitacaoConta.getCpf())
-                .senhaAuth(solicitacaoConta.getSenhaAuth())
-                .role(UserRole.USER)
-                .build();
-        Conta contaBuilder =
-                Conta.builder()
-                .agencia("0001")
-                .numConta(this.geraNumeroConta())
-                .tipoConta(TipoConta.CORRENTE)
-                .statusConta(StatusConta.ATIVA)
-                .saldo(0.0)
-                .usuario(usuario)
-                .acessoConta(acessoConta)
-                .dataCriacao(LocalDateTime.now())
-                .build();
-        Conta contaCriada = contaRepository.save(contaBuilder);
-        solicitacaoContaRepository.deleteById(solicitacaoConta.getId());
-        emailService.sendEmail(geraEmail(contaCriada));
-
+        SolicitacaoConta solicitacaoConta = solicitacaoContaService.retornarSolicitacaoConta(solicitacaoId);
+        Conta conta = criarObjetoConta(solicitacaoConta);
+        emailService.sendEmail(gerarEmailContaAprovada(conta));
+        contaRepository.save(conta);
+        solicitacaoContaService.excluirSolicitacaoConta(solicitacaoId);
         return "Conta aprovada com sucesso!";
     }
     @Override
     public String reprovarConta(String solicitacaoId)
     {
-        SolicitacaoConta solicitacaoConta = solicitacaoContaRepository.findById(solicitacaoId).orElseThrow(
-                () -> new RegistroNaoEncontradoException("solicitação de conta", solicitacaoId)
-        );
-        solicitacaoContaRepository.deleteById(solicitacaoConta.getId());
+        SolicitacaoConta solicitacaoConta = solicitacaoContaService.retornarSolicitacaoConta(solicitacaoId);
+        solicitacaoContaService.excluirSolicitacaoConta(solicitacaoId);
+        emailService.sendEmail(gerarEmailContaReprovada(solicitacaoConta));
         return "Conta reprovada com sucesso!";
     }
 
-    private String geraNumeroConta()
+    public Conta retornarConta(String cpf)
+    {
+        return contaRepository.findContaByUsuarioCpf(cpf).orElseThrow(
+                () -> new RegistroNaoEncontradoException("usuário", cpf)
+        );
+    }
+
+    private static Usuario criarObjetoUsuario(SolicitacaoConta solicitacaoConta)
+    {
+        return Usuario.builder()
+                .primeiroNome(solicitacaoConta.getPrimeiroNome())
+                .sobrenome(solicitacaoConta.getSobrenome())
+                .cpf(solicitacaoConta.getCpf())
+                .dataNascimento(solicitacaoConta.getDataNascimento())
+                .email(solicitacaoConta.getEmail())
+                .numeroTelefone(solicitacaoConta.getNumeroTelefone())
+                .build();
+    }
+
+    private static AcessoConta criarAcessoConta(SolicitacaoConta solicitacaoConta)
+    {
+        return AcessoConta.builder()
+                .login(solicitacaoConta.getCpf())
+                .senhaAuth(solicitacaoConta.getSenhaAuth())
+                .role(UserRole.USER)
+                .build();
+    }
+
+    private static Conta criarObjetoConta(SolicitacaoConta solicitacaoConta)
+    {
+       return Conta.builder()
+                        .agencia("0001")
+                        .numConta(gerarNumeroConta())
+                        .tipoConta(TipoConta.CORRENTE)
+                        .statusConta(StatusConta.ATIVA)
+                        .saldo(0.0)
+                        .usuario(criarObjetoUsuario(solicitacaoConta))
+                        .acessoConta(criarAcessoConta(solicitacaoConta))
+                        .dataCriacao(LocalDateTime.now())
+                        .build();
+    }
+
+    private static String gerarNumeroConta()
     {
         Random rand = new Random();
-        StringBuilder chaveBuilder = new StringBuilder();
-
+        StringBuilder numeroContaBuilder = new StringBuilder();
         for (int i = 0; i < 7; i++)
-        {
-            if(i == 5)
-                chaveBuilder.append("-");
-            else
-                chaveBuilder.append(rand.nextInt(10));
-        }
-        return chaveBuilder.toString();
+            if (i == 5) numeroContaBuilder.append("-"); else numeroContaBuilder.append(gerarNumeroAleatorio(rand));
+        return numeroContaBuilder.toString();
     }
-    private EmailDto geraEmail(Conta contaCriada)
+    private static EmailDto gerarEmailContaAprovada(Conta contaCriada)
     {
-        return
-                EmailDto.builder()
+        return EmailDto.builder()
                         .ownerRef("Bank")
                         .emailFrom("noreply-bank@gmail.com")
                         .emailTo(contaCriada.getUsuario().getEmail())
@@ -110,5 +117,26 @@ public class ContaService implements ContaServiceRep {
                                         + "\nAgência: " + contaCriada.getAgencia()
                                         + "\n\nAtenciosamente, equipe Bank.")
                         .build();
+    }
+
+    private static EmailDto gerarEmailContaReprovada(SolicitacaoConta solicitacaoConta)
+    {
+        return EmailDto.builder()
+                .ownerRef("Bank")
+                .emailFrom("noreply-bank@gmail.com")
+                .emailTo(solicitacaoConta.getEmail())
+                .subject("Solicitação de conta")
+                .body(
+                        "Olá, " + solicitacaoConta.getPrimeiroNome() + "."
+                                + "\n\nLamentamos, sua solicitação de conta foi reprovada!"
+                                + "\n\nSeu perfil, no momento, não se enquadra nos pré-requisitos."
+                                + "\n\nEsperamos encontrá-lo em uma oportunidade futura."
+                                + "\n\nAtenciosamente, equipe Bank.")
+                .build();
+    }
+
+    private static int gerarNumeroAleatorio(Random rand)
+    {
+        return rand.nextInt(10);
     }
 }

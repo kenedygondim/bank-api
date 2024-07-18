@@ -18,13 +18,15 @@ import java.time.LocalDateTime;
 @Getter
 public class Conta {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(name = "tipo_conta", nullable = false)
+    @Enumerated(EnumType.STRING)
     private TipoConta tipoConta;
 
     @Column(name = "status_conta", nullable = false)
+    @Enumerated(EnumType.STRING)
     private StatusConta statusConta;
 
     @Column(nullable = false, length = 4)
@@ -42,18 +44,16 @@ public class Conta {
     @Column(name = "data_criacao", nullable = false)
     private LocalDateTime dataCriacao;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "usuario_id", nullable = false)
     @JsonIgnore
     private Usuario usuario;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "acesso_conta_id", nullable = false)
     @JsonIgnore
     private AcessoConta acessoConta;
 
-    @OneToOne(mappedBy = "conta")
+    @OneToOne(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
     private SenhaTransacao senhaTransacao;
 }

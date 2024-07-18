@@ -32,6 +32,7 @@ public class AcessoConta implements UserDetails
     private String senhaAuth;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private UserRole role;
 
 

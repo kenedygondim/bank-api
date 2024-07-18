@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TransferenciaDto
 {
-    private long id;
+    private String id;
     private ContaDto remetente;
     private ContaDto destinatario;
     private double valor;

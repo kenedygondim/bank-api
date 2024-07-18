@@ -37,21 +37,7 @@ public class Usuario {
 
     //permite que a exclusão de um cliente remova registros de endereço, mas não o contrário
     //obs: essa config não criará uma chave estrangeira do lado do Cliente
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonIgnore
     private Endereco endereco;
-
-    @Override
-    public String toString() {
-        return "Usuario{" +
-                "id='" + id + '\'' +
-                ", primeiroNome='" + primeiroNome + '\'' +
-                ", sobrenome='" + sobrenome + '\'' +
-                ", cpf='" + cpf + '\'' +
-                ", dataNascimento='" + dataNascimento + '\'' +
-                ", email='" + email + '\'' +
-                ", numeroTelefone='" + numeroTelefone + '\'' +
-                ", endereco=" + endereco +
-                '}';
-    }
 }

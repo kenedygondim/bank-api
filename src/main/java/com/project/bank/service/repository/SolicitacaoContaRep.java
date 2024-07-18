@@ -10,6 +10,6 @@ import java.util.List;
 public interface SolicitacaoContaRep
 {
     String solicitarConta(SolicitacaoContaForm formUsuario);
-    List<SolicitacaoContaDto> obterSolicitacoes();
-    //void contaAdmin();
+    List<SolicitacaoConta> obterSolicitacoes();
+    void contaAdmin();
 }

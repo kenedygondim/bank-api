@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ChavePix {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(name = "tipo_chave", nullable = false)
     @Enumerated(EnumType.STRING)

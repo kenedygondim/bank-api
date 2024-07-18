@@ -4,9 +4,12 @@ import com.project.bank.email.EmailDto;
 import com.project.bank.email.EmailService;
 import com.project.bank.entity.dto.SolicitacaoContaDto;
 import com.project.bank.entity.form.SolicitacaoContaForm;
+import com.project.bank.entity.model.AcessoConta;
 import com.project.bank.entity.model.SolicitacaoConta;
+import com.project.bank.enumeration.UserRole;
 import com.project.bank.handler.BusinessException;
 import com.project.bank.handler.RegistroDuplicadoException;
+import com.project.bank.handler.RegistroNaoEncontradoException;
 import com.project.bank.repository.AcessoContaRepository;
 import com.project.bank.repository.SolicitacaoContaRepository;
 import com.project.bank.repository.UsuarioRepository;
@@ -37,44 +40,35 @@ public class SolicitacaoContaService implements SolicitacaoContaRep
     private final SolicitacaoContaRepository solicitacaoContaRepository;
     @Autowired
     private final UsuarioRepository usuarioRepository;
+    @Autowired
+    private AcessoContaRepository acessoContaRepository;
 
     @Override
     @Transactional
     public String solicitarConta(SolicitacaoContaForm formSolicitacaoConta)
     {
-        if (retornaIdadeUsuario(formSolicitacaoConta.dataNascimento()) < 18)
-            throw new BusinessException("Usuários devem ser maiores de 18 anos.");
-        verificaCamposExistentes(formSolicitacaoConta);
-        verificaSolicitacaoExistente(formSolicitacaoConta.cpf());
-        SolicitacaoConta solicitacaoContaBuilder =
-                SolicitacaoConta.builder()
-                        .primeiroNome(formSolicitacaoConta.primeiroNome())
-                        .sobrenome(formSolicitacaoConta.sobrenome())
-                        .cpf(formSolicitacaoConta.cpf())
-                        .dataNascimento(formSolicitacaoConta.dataNascimento())
-                        .email(formSolicitacaoConta.email())
-                        .numeroTelefone(formataNumeroTelefone(formSolicitacaoConta.numeroTelefone()))
-                        .senhaAuth(new BCryptPasswordEncoder().encode(formSolicitacaoConta.senha()))
-                        .build();
-        try
-        {
-            SolicitacaoConta solicitacaoConta = solicitacaoContaRepository.save(solicitacaoContaBuilder);
-            emailService.sendEmail(geraEmail(solicitacaoConta));
-            return "Conta solicitada com sucesso. Verifique seu email para mais informações.";
-        } catch (Exception e)
-        {
-            throw new BusinessException("Erro ao solicitar conta.");
-        }
+        verificarIdadeUsuario(formSolicitacaoConta.dataNascimento());
+        verificarCamposExistentes(formSolicitacaoConta);
+        verificarSolicitacaoExistente(formSolicitacaoConta.cpf());
+        criarObjetoSolicitacaoConta(formSolicitacaoConta);
+        SolicitacaoConta solicitacaoConta = solicitacaoContaRepository.save(criarObjetoSolicitacaoConta(formSolicitacaoConta));
+        emailService.sendEmail(gerarEmail(solicitacaoConta));
+        return "Conta solicitada com sucesso. Verifique seu email para mais informações.";
+    }
+
+    @Override
+    public List<SolicitacaoConta> obterSolicitacoes() {
+        return solicitacaoContaRepository.findAll();
     }
     @Override
-    public List<SolicitacaoContaDto> obterSolicitacoes() {
-        List<SolicitacaoConta> solicitacoes = solicitacaoContaRepository.findAll();
-        List<SolicitacaoContaDto> solicitacoesDto = new ArrayList<>();
-        for(SolicitacaoConta solicitacao : solicitacoes)
-        {
-            solicitacoesDto.add(modelMapper.map(solicitacao, SolicitacaoContaDto.class));
-        }
-        return solicitacoesDto;
+    public  void contaAdmin() {
+        String BCryptPasswordEncoder;
+        AcessoConta acessoConta = AcessoConta.builder()
+                .login("admin")
+                .role(UserRole.ADMIN)
+                .senhaAuth(new BCryptPasswordEncoder().encode("admin"))
+                .build();
+        acessoContaRepository.save(acessoConta);
     }
     /*@Override
     public void contaAdmin() {
@@ -85,11 +79,35 @@ public class SolicitacaoContaService implements SolicitacaoContaRep
                 .build();
         acessoContaRepository.save(acessoConta);
     }*/
-    private String formataNumeroTelefone(String numeroTelefone)
+
+    public SolicitacaoConta retornarSolicitacaoConta(String solicitacaoId)
+    {
+        return solicitacaoContaRepository.findById(solicitacaoId).orElseThrow(
+                () -> new RegistroNaoEncontradoException("solicitação de conta", solicitacaoId)
+        );
+    }
+    public void excluirSolicitacaoConta(String solicitacaoId)
+    {
+         solicitacaoContaRepository.deleteById(solicitacaoId);
+    }
+
+    private static String formatarNumeroTelefone(String numeroTelefone)
     {
         return numeroTelefone.replaceAll("[^0-9]", "");
     }
-    private void verificaCamposExistentes(SolicitacaoContaForm formSolicitacaoConta)
+    private static SolicitacaoConta criarObjetoSolicitacaoConta(SolicitacaoContaForm formSolicitacaoConta)
+    {
+        return SolicitacaoConta.builder()
+                .primeiroNome(formSolicitacaoConta.primeiroNome())
+                .sobrenome(formSolicitacaoConta.sobrenome())
+                .cpf(formSolicitacaoConta.cpf())
+                .dataNascimento(formSolicitacaoConta.dataNascimento())
+                .email(formSolicitacaoConta.email())
+                .numeroTelefone(formatarNumeroTelefone(formSolicitacaoConta.numeroTelefone()))
+                .senhaAuth(new BCryptPasswordEncoder().encode(formSolicitacaoConta.senha()))
+                .build();
+    }
+    private void verificarCamposExistentes(SolicitacaoContaForm formSolicitacaoConta)
     {
         if (usuarioRepository.existsByCpf(formSolicitacaoConta.cpf()))
             throw new RegistroDuplicadoException("CPF");
@@ -98,25 +116,26 @@ public class SolicitacaoContaService implements SolicitacaoContaRep
         if (usuarioRepository.existsByNumeroTelefone(formSolicitacaoConta.numeroTelefone()))
             throw new RegistroDuplicadoException("número de telefone");
     }
-    private void verificaSolicitacaoExistente(String cpf)
+    private void verificarSolicitacaoExistente(String cpf)
     {
         if (solicitacaoContaRepository.existsByCpf(cpf))
             throw new BusinessException("Solicitação de conta já realizada.");
     }
-    private int retornaIdadeUsuario(String dataNascimento)
+    private void verificarIdadeUsuario(String dataNascimento)
     {
         try
         {
             DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate date = LocalDate.parse(dataNascimento, formatador);
             Period periodo = Period.between(date, LocalDate.now());
-            return periodo.getYears();
+            if(periodo.getYears() < 18)
+                throw new BusinessException("Usuários devem ser maiores de 18 anos.");
         } catch (DateTimeParseException e)
         {
             throw new DateTimeParseException("Data de nascimento inválida", dataNascimento, 0, e);
         }
     }
-    private EmailDto geraEmail(SolicitacaoConta solicitacaoConta)
+    private EmailDto gerarEmail(SolicitacaoConta solicitacaoConta)
     {
         return
                 EmailDto.builder()
@@ -131,6 +150,4 @@ public class SolicitacaoContaService implements SolicitacaoContaRep
                                         + "\n\nAtenciosamente, equipe Bank.")
                         .build();
     }
-
-
 }
