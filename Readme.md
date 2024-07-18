@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Trata-se de uma API Rest que simula o funcionamento básico de um banco digital, sendo possível criar conta, fazer login, cadastrar chaves pix, realizar transferências entre contas, tirar extrato bancário, entre outras funcionalidades.
+Trata-se de uma API Rest que simula o funcionamento básico de um banco digital, sendo possível criar bankAccountInfo, fazer login, cadastrar chaves pix, realizar transferências entre contas, tirar extrato bancário, entre outras funcionalidades.
 
 Essa aplicação foi desenvolvida com Java 17, Spring Boot e Spring Security.Como banco de dados foi utilizado o MySQL. Além disso, utilizei serviços externos como o SMTP do Gmail para envio de e-mails e o serviço de CEP da ViaCEP para busca de endereços.
 
@@ -21,7 +21,7 @@ api.security.token.secret=${JWT_SECRET:sua-chave-secreta}
 
 spring.jpa.hibernate.ddl-auto=update
 spring.datasource.url=jdbc:mysql://localhost:3306/Bank
-spring.datasource.username=__altere-para-seu-usuario-do-mysql__
+spring.datasource.username=__altere-para-seu-userPersonalInfo-do-mysql__
 spring.datasource.password=sua-senha-do-mysql
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.jpa.show-sql: true
@@ -64,11 +64,11 @@ Lembrando que esse processo deve ser feito em todas as requisições que necessi
 
 ### Público geral
 
-Qualquer pessoa pode enviar requisições para os relacionados a solicitação de conta e login.
+Qualquer pessoa pode enviar requisições para os relacionados a solicitação de bankAccountInfo e login.
 
 ***
 
-#### 1 - Solicitação de conta:
+#### 1 - Solicitação de bankAccountInfo:
 
 - Método HTTP: POST.
 - Endpoint:
@@ -115,7 +115,7 @@ Os usuários cadastrados no sistema são os usuários que já realizaram o cadas
 - Método HTTP: POST.
 - Endpoint:
 ```
-localhost:8080/bank/endereco
+localhost:8080/bank/address
 ```
 - Corpo da requisição:
 ```json
@@ -134,7 +134,7 @@ O usuário deve cadastrar uma senha para realizar transferências.
 - Método HTTP: POST.
 - Endpoint:
 ```
-localhost:8080/bank/senhaTransacao
+localhost:8080/bank/userTransactionPassword
 ```
 - Corpo da requisição:
 ```json
@@ -157,7 +157,7 @@ localhost:8080/bank/chavesPix
 - Corpo da requisição:
 ```json
 {
-    "tipoChave": ""
+    "keyTypeEnum": ""
 }
 ```
 Escolha entre as opções CPF,EMAIL,NUMERO_TELEFONE ou ALEATORIA. As chaves aleatórias são geradas automaticamente pelo sistema e as demais de acordo com as informações do usuário.
@@ -168,12 +168,12 @@ Escolha entre as opções CPF,EMAIL,NUMERO_TELEFONE ou ALEATORIA. As chaves alea
 - Método HTTP: POST.
 - Endpoint:
 ```
-localhost:8080/bank/transferencias
+localhost:8080/bank/userTransactions
 ```
 - Corpo da requisição:
 ```json
 {
-    "chavePix": "",
+    "userPixKeys": "",
     "valor": 0.0
 }
 ```

@@ -25,34 +25,34 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //ativando autenticação stateless (baseada em tokens), sem guardar estado de sessões anteriores
                 .authorizeHttpRequests(autorize -> autorize
                         //ALL
-                        .requestMatchers(HttpMethod.POST, "/bank/solicitacaoConta").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/bank/accountRequest").permitAll()
                         .requestMatchers(HttpMethod.POST, "/bank/auth/login").permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/bank/solicitarConta/contaAdmin").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/bank/accountRequest/adminAccount").permitAll()
                         //ALL\\
 
                         //USER
                             //GET
-                            .requestMatchers(HttpMethod.GET, "/bank/usuarios").hasRole("USER")
-                            .requestMatchers(HttpMethod.GET, "/bank/endereco").hasRole("USER")
-                            .requestMatchers(HttpMethod.GET, "/bank/chavePix").hasRole("USER")
-                            .requestMatchers(HttpMethod.GET, "/bank/transferencias/**").hasRole("USER")
-                            .requestMatchers(HttpMethod.GET, "/bank/transferencias/all").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/bank/users").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/bank/address").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/bank/pixKey/all").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/bank/transaction/**").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/bank/transaction/all").hasRole("USER")
                             //POST
-                            .requestMatchers(HttpMethod.POST, "/bank/endereco").hasRole("USER")
-                            .requestMatchers(HttpMethod.POST, "/bank/chavePix").hasRole("USER")
-                            .requestMatchers(HttpMethod.POST, "/bank/senhaTransacao").hasRole("USER")
-                            .requestMatchers(HttpMethod.POST, "/bank/transferencias").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/bank/address").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/bank/pixKey").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/bank/transactionPassword").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/bank/transaction").hasRole("USER")
                             //PATCH
-                            .requestMatchers(HttpMethod.PATCH, "/bank/senhaTransacao").hasRole("USER")
+                            .requestMatchers(HttpMethod.PATCH, "/bank/transactionPassword").hasRole("USER")
                             //DELETE
-                            .requestMatchers(HttpMethod.DELETE, "/bank/chavePix/excluir").hasRole("USER")
+                            .requestMatchers(HttpMethod.DELETE, "/bank/pixKey/delete").hasRole("USER")
                         //USER\\
 
                         //ADMIN
-                        .requestMatchers(HttpMethod.GET, "/bank/usuarios/all").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/bank/solicitacaoConta/solicitacoes").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "bank/conta/aprovarConta/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "bank/conta/reprovarConta/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/bank/users/all").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/bank/accountRequest/requests/all").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "bank/approveAccount/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "bank/disapproveAccount/**").hasRole("ADMIN")
                         //ADMIN\\
                         .anyRequest().authenticated()
                 )

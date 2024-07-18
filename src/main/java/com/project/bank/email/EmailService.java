@@ -1,5 +1,7 @@
 package com.project.bank.email;
 
+import com.project.bank.entity.model.AccountRequest;
+import com.project.bank.entity.model.BankAccountInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.mail.MailException;
@@ -20,7 +22,6 @@ public class EmailService
         BeanUtils.copyProperties(emailDto, email); //'converte' dto para model e vice-versa
 
         email.setSendDateEmail(LocalDateTime.now());
-
         try
         {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -36,4 +37,51 @@ public class EmailService
             throw new RuntimeException("Erro ao enviar email");
         }
     }
+
+    public EmailDto generateRequestEmail(AccountRequest accountRequest) {
+        return EmailDto.builder()
+                        .ownerRef("Bank")
+                        .emailFrom("noreply-bank@gmail.com")
+                        .emailTo(accountRequest.getEmail())
+                        .subject("Solicitação de conta")
+                        .body(
+                                "Olá, " + accountRequest.getFirstName() + "."
+                                        + "\n\nSua solicitação de conta foi realizada com sucesso!"
+                                        + "\n\nIremos analisar o seu perfil o mais breve possível e entraremos em contato com você."
+                                        + "\n\nAtenciosamente, equipe Bank.")
+                        .build();
+    }
+    public EmailDto generateApprovedAccountEmail(BankAccountInfo bankAccountInfoCriada)
+    {
+        return EmailDto.builder()
+                .ownerRef("Bank")
+                .emailFrom("noreply-bank@gmail.com")
+                .emailTo(bankAccountInfoCriada.getUserPersonalInfo().getEmail())
+                .subject("Solicitação de conta")
+                .body(
+                        "Olá, " + bankAccountInfoCriada.getUserPersonalInfo().getFirstName() + "."
+                                + "\n\nSua solicitação de conta foi aprovada!"
+                                + "\n\nAcesse o aplicativo com seu CPF e password cadastrados na solicitação."
+                                + "\nConta: " + bankAccountInfoCriada.getAccountNumber()
+                                + "\nAgência: " + bankAccountInfoCriada.getBranchNumber()
+                                + "\n\nAtenciosamente, equipe Bank.")
+                .build();
+    }
+
+    public EmailDto generateDisapprovedAccountEmail(AccountRequest accountRequest)
+    {
+        return EmailDto.builder()
+                .ownerRef("Bank")
+                .emailFrom("noreply-bank@gmail.com")
+                .emailTo(accountRequest.getEmail())
+                .subject("Solicitação de conta")
+                .body(
+                        "Olá, " + accountRequest.getFirstName() + "."
+                                + "\n\nLamentamos, sua solicitação de conta foi reprovada!"
+                                + "\n\nSeu perfil, no momento, não se enquadra nos pré-requisitos."
+                                + "\n\nEsperamos encontrá-lo em uma oportunidade futura."
+                                + "\n\nAtenciosamente, equipe Bank.")
+                .build();
+    }
+
 }

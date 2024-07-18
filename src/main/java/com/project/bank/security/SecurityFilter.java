@@ -1,11 +1,12 @@
 package com.project.bank.security;
 
-import com.project.bank.repository.AcessoContaRepository;
+import com.project.bank.repository.AccountAccessRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,8 +19,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter
 {
-    private final TokenService tokenService;
-    private final AcessoContaRepository acessoContaRepository;
+    @Autowired
+    private TokenService tokenService;
+    @Autowired
+    private AccountAccessRepository accountAccessRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
@@ -28,7 +31,7 @@ public class SecurityFilter extends OncePerRequestFilter
         if(token != null)
         {
             var login = tokenService.validateToken(token);
-            UserDetails acessoConta = acessoContaRepository.findByLogin(login);
+            UserDetails acessoConta = accountAccessRepository.findByLogin(login);
             var authentication = new UsernamePasswordAuthenticationToken(acessoConta, null, acessoConta.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

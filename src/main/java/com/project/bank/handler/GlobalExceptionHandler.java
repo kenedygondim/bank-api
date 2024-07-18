@@ -35,7 +35,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
         return responseError;
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({Exception.class})
     private ResponseEntity<Object> handleGeneral(Exception ex, WebRequest req)
     {
         if(ex.getClass().isAssignableFrom(UndeclaredThrowableException.class))
@@ -51,22 +51,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
         }
     }
 
-    @ExceptionHandler(BusinessException.class)
+    @ExceptionHandler({BusinessException.class})
     private ResponseEntity<Object> handleBusinessException(BusinessException ex, WebRequest req)
     {
         ResponseError responseError = responseError(ex.getMessage(), HttpStatus.BAD_REQUEST);
         return handleExceptionInternal(ex, responseError, headers(), HttpStatus.BAD_REQUEST, req);
     }
 
-    @ExceptionHandler(RegistroNaoEncontradoException.class)
-    private ResponseEntity<Object> handleRegistroNaoEncontradoException(RegistroNaoEncontradoException ex, WebRequest req)
+    @ExceptionHandler({NotFoundException.class})
+    private ResponseEntity<Object> handleRegistroNaoEncontradoException(NotFoundException ex, WebRequest req)
     {
         ResponseError responseError = responseError(ex.getMessage(), HttpStatus.NOT_FOUND);
         return handleExceptionInternal(ex, responseError, headers(), HttpStatus.NOT_FOUND, req);
     }
 
-    @ExceptionHandler(RegistroDuplicadoException.class)
-    private ResponseEntity<Object> handleRegistroDuplicadoException(RegistroDuplicadoException ex, WebRequest req)
+    @ExceptionHandler({DuplicateException.class})
+    private ResponseEntity<Object> handleRegistroDuplicadoException(DuplicateException ex, WebRequest req)
     {
         ResponseError responseError = responseError(ex.getMessage(), HttpStatus.CONFLICT);
         return handleExceptionInternal(ex, responseError, headers(), HttpStatus.CONFLICT, req);
