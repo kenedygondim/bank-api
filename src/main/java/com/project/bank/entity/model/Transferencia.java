@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @Getter
 public class Transferencia {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "remetente_id", nullable = false)

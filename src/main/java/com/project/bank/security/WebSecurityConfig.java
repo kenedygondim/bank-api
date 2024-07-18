@@ -27,7 +27,7 @@ public class WebSecurityConfig {
                         //ALL
                         .requestMatchers(HttpMethod.POST, "/bank/solicitacaoConta").permitAll()
                         .requestMatchers(HttpMethod.POST, "/bank/auth/login").permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/bank/solicitarConta/contaAdmin").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/bank/solicitacaoConta/contaAdmin").permitAll()
                         //ALL\\
 
                         //USER

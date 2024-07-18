@@ -13,8 +13,8 @@ import lombok.*;
 @Setter
 public class Endereco {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(nullable = false, length = 9)
     private String cep;
@@ -37,7 +37,7 @@ public class Endereco {
     @Column(nullable = true, length = 10)
     private String complemento;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     @JsonIgnore
     private Usuario usuario;

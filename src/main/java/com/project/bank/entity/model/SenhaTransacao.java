@@ -12,8 +12,8 @@ import lombok.*;
 @Setter
 public class SenhaTransacao {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(nullable = false, length = 150) //Por enquanto vai ser uma senha simples de 6 digitos
     private String senha;

@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public class ChavePixDto {
-    private long id;
+    private String id;
     private TipoChave tipoChave;
     private String chave;
 }

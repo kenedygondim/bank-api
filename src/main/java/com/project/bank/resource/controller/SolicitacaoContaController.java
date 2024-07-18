@@ -2,6 +2,7 @@ package com.project.bank.resource.controller;
 
 import com.project.bank.entity.dto.SolicitacaoContaDto;
 import com.project.bank.entity.form.SolicitacaoContaForm;
+import com.project.bank.entity.model.SolicitacaoConta;
 import com.project.bank.service.implementation.SolicitacaoContaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +26,13 @@ public class SolicitacaoContaController
         return ResponseEntity.ok(solicitacaoContaService.solicitarConta(formUsuario));
     }
     @GetMapping("/solicitacoes")
-    public ResponseEntity<List<SolicitacaoContaDto>> obterSolicitacoes()
+    public ResponseEntity<List<SolicitacaoConta>> obterSolicitacoes()
     {
         return ResponseEntity.ok(solicitacaoContaService.obterSolicitacoes());
     }
-    /*@PostMapping("/contaAdmin")
+    @PostMapping("/contaAdmin")
     public void contaAdmin()
     {
         solicitacaoContaService.contaAdmin();
-    }*/
+    }
 }

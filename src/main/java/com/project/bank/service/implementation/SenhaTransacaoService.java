@@ -1,10 +1,9 @@
 package com.project.bank.service.implementation;
-import com.project.bank.entity.form.SenhaTransacaoPostForm;
-import com.project.bank.entity.form.SenhaTransacaoPutForm;
+
+import com.project.bank.entity.form.SenhaTransacaoForm;
 import com.project.bank.entity.model.Conta;
 import com.project.bank.entity.model.SenhaTransacao;
 import com.project.bank.handler.BusinessException;
-import com.project.bank.handler.RegistroNaoEncontradoException;
 import com.project.bank.repository.ContaRepository;
 import com.project.bank.repository.SenhaTransacaoRepository;
 import com.project.bank.service.repository.SenhaTransacaoServiceRep;
@@ -19,35 +18,39 @@ public class SenhaTransacaoService implements SenhaTransacaoServiceRep
     @Autowired
     private SenhaTransacaoRepository senhaTransacaoRepository;
     @Autowired
-    private ContaRepository contaRepository;
+    private ContaService contaService;
 
     @Override
-    public String cadastrarSenhaTransacao(SenhaTransacaoPostForm senhaTransacao, String cpf)
+    public String cadastrarSenhaTransacao(SenhaTransacaoForm senhaTransacaoForm, String cpf)
     {
-        Conta conta = contaRepository.findContaByUsuarioCpf(cpf);
-        if(conta.getSenhaTransacao() != null)
-            throw new BusinessException("A conta já possui uma senha de transação cadastrada.");
-        if(!senhaTransacao.senha().equals(senhaTransacao.confirmacaoSenha()))
-            throw new BusinessException("As senhas não conferem.");
-        SenhaTransacao objConstruido =
-                SenhaTransacao.builder()
-                        .senha(new BCryptPasswordEncoder().encode(senhaTransacao.senha()))
-                        .conta(conta)
-                        .build();
-        senhaTransacaoRepository.save(objConstruido);
-
+        Conta conta = contaService.retornarConta(cpf);
+        verificarExistenciaSenha(conta.getSenhaTransacao());
+        senhaTransacaoRepository.save(criarObjetoSenhaTransacao(senhaTransacaoForm, conta));
         return "Senha criada com sucesso!";
     }
-
     @Override
-    public SenhaTransacao atualizarSenhaTransacao(SenhaTransacaoPutForm senhaTransacao, String cpf)
+    public SenhaTransacao atualizarSenhaTransacao(SenhaTransacaoForm senhaTransacaoForm, String cpf)
     {
-        Conta conta = contaRepository.findContaByUsuarioCpf(cpf);
-        if(!new BCryptPasswordEncoder().matches(senhaTransacao.senhaAtual(), conta.getSenhaTransacao().getSenha()))
-            throw new BusinessException("A senha atual não confere.");
-        if(new BCryptPasswordEncoder().matches(senhaTransacao.novaSenha(), conta.getSenhaTransacao().getSenha()))
-            throw new BusinessException("A nova senha não pode ser igual a senha atual.");
-        conta.getSenhaTransacao().setSenha(senhaTransacao.novaSenha());
+        Conta conta = contaService.retornarConta(cpf);
+        verificarNovaSenha(senhaTransacaoForm, conta);
+        conta.getSenhaTransacao().setSenha(senhaTransacaoForm.senha());
         return senhaTransacaoRepository.save(conta.getSenhaTransacao());
+    }
+    public static void verificarExistenciaSenha(SenhaTransacao senhaTransacao)
+    {
+        if(senhaTransacao != null)
+            throw new BusinessException("A conta já possui uma senha de transação cadastrada.");
+    }
+    public static SenhaTransacao criarObjetoSenhaTransacao(SenhaTransacaoForm senhaTransacaoPostForm, Conta conta)
+    {
+        return SenhaTransacao.builder()
+                        .senha(new BCryptPasswordEncoder().encode(senhaTransacaoPostForm.senha()))
+                        .conta(conta)
+                        .build();
+    }
+    public static void verificarNovaSenha(SenhaTransacaoForm senhaTransacaoForm, Conta conta)
+    {
+        if(new BCryptPasswordEncoder().matches(senhaTransacaoForm.senha(), conta.getSenhaTransacao().getSenha()))
+            throw new BusinessException("A nova senha não pode ser igual a senha atual.");
     }
 }

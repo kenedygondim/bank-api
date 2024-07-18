@@ -5,7 +5,7 @@ import lombok.Builder;
 @Builder
 public class UsuarioDto
 {
-    private long id;
+    private String id;
     private String nomeCompleto;
     private String cpf;
     private String dataNascimento;

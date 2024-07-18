@@ -10,5 +10,5 @@ import java.util.List;
 public interface TransferenciaRepository extends JpaRepository<Transferencia, Long>
 {
     @Query("SELECT t FROM Transferencia t WHERE t.remetente.id = :id OR t.destinatario.id = :id")
-    List<Transferencia> findAllByRemetenteIdOrDestinatarioId(long id);
+    List<Transferencia> findAllByRemetenteIdOrDestinatarioId(String id);
 }

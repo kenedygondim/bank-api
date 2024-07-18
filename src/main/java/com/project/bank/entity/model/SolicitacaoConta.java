@@ -12,6 +12,8 @@ import lombok.*;
 @Data
 public class SolicitacaoConta
 {
+    //adicionar coluna de data da solicitação
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -36,6 +38,7 @@ public class SolicitacaoConta
 
     @Builder.Default
     @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
     private SolicitacaoContaEnum solicitacaoContaEnum = SolicitacaoContaEnum.PENDENTE;
 
     @Column(name = "senha", nullable = false)

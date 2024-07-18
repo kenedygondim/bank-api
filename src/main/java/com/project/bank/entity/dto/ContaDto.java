@@ -7,7 +7,7 @@ import lombok.Builder;
 @Builder
 public class ContaDto
 {
-    private long id;
+    private String id;
     private TipoConta tipoConta;
     private StatusConta statusConta;
     private String agencia;
