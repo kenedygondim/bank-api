@@ -1,6 +1,7 @@
 package com.project.bank.resource.controller;
 
 import com.project.bank.entity.dto.TransactionDto;
+import com.project.bank.entity.model.Transaction;
 import com.project.bank.service.implementation.TransactionsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class TransactionController
     private TransactionsService transactionsService;
 
     @PostMapping
-    public ResponseEntity<TransactionDto> createTransaction(@RequestBody @Valid TransactionDto transactionDto, Principal principal)
+    public ResponseEntity<Transaction> createTransaction(@RequestBody @Valid TransactionDto transactionDto, Principal principal)
     {
         return ResponseEntity.ok(transactionsService.createTransaction(transactionDto, principal.getName()));
     }
