@@ -1,0 +1,2 @@
+ALTER TABLE `tb_address`
+MODIFY COLUMN `id` VARCHAR(36) NOT NULL;
