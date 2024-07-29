@@ -32,7 +32,7 @@ public class WebSecurityConfig {
 
                         //USER
                             //GET
-                            .requestMatchers(HttpMethod.GET, "/bank/users").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/bank/clients").hasRole("USER")
                             .requestMatchers(HttpMethod.GET, "/bank/address").hasRole("USER")
                             .requestMatchers(HttpMethod.GET, "/bank/pixKey/all").hasRole("USER")
                             .requestMatchers(HttpMethod.GET, "/bank/transaction/**").hasRole("USER")
@@ -53,6 +53,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/bank/accountRequest/requests/all").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "bank/approveAccount/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "bank/disapproveAccount/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/bank/approveAccount/all").hasRole("ADMIN")
                         //ADMIN\\
                         .anyRequest().authenticated()
                 )
