@@ -9,12 +9,10 @@ import java.util.List;
 @Service
 public interface AccountRequestRepositoryService {
     AccountRequest requestAccount(AccountRequestDto accountRequestDto);
-
     AccountRequest getAccountRequest(String requestId);
-
     List<AccountRequest> getAccountRequests();
-
     void deleteAccountRequest(String solicitacaoId);
-
     void createAdminAccount();
+    Boolean existsByCpf(String cpf);
+    AccountRequest saveAccountRequest(AccountRequest accountRequest);
 }
