@@ -51,24 +51,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
         }
     }
 
-    @ExceptionHandler({BusinessException.class})
-    private ResponseEntity<Object> handleBusinessException(BusinessException ex, WebRequest req)
-    {
-        ResponseError responseError = responseError(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        return handleExceptionInternal(ex, responseError, headers(), HttpStatus.BAD_REQUEST, req);
-    }
 
-    @ExceptionHandler({NotFoundException.class})
-    private ResponseEntity<Object> handleRegistroNaoEncontradoException(NotFoundException ex, WebRequest req)
-    {
-        ResponseError responseError = responseError(ex.getMessage(), HttpStatus.NOT_FOUND);
-        return handleExceptionInternal(ex, responseError, headers(), HttpStatus.NOT_FOUND, req);
-    }
-
-    @ExceptionHandler({DuplicateException.class})
-    private ResponseEntity<Object> handleRegistroDuplicadoException(DuplicateException ex, WebRequest req)
-    {
-        ResponseError responseError = responseError(ex.getMessage(), HttpStatus.CONFLICT);
-        return handleExceptionInternal(ex, responseError, headers(), HttpStatus.CONFLICT, req);
-    }
 }
