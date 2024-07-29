@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TransactionPasswordRepositoryService {
     String createTransactionPassword(TransactionPasswordDto transactionPasswordDto, String cpf);
-
     TransactionPassword updateTransactionPassword(TransactionPasswordDto transactionPasswordDto, String cpf);
+    TransactionPassword saveTransactionPassword(TransactionPassword transactionPassword);
 }
