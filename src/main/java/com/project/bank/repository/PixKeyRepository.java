@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface PixKeyRepository extends JpaRepository<PixKey, String>
 {
-    @Query("SELECT p FROM PixKey p JOIN p.bankAccountInfo c JOIN c.userPersonalInfo u WHERE u.cpf = :cpf")
+    @Query("SELECT p FROM PixKey p JOIN p.account c JOIN c.client u WHERE u.cpf = :cpf")
     List<PixKey> findAllKeysByCpf(String cpf);
     Optional<PixKey> findByKeyValue(String keyValue);
 }
