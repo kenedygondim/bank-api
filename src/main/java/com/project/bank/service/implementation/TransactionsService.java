@@ -1,7 +1,7 @@
 package com.project.bank.service.implementation;
 
 import com.project.bank.entity.dto.TransactionDto;
-import com.project.bank.entity.model.BankAccountInfo;
+import com.project.bank.entity.model.Account;
 import com.project.bank.entity.model.PixKey;
 import com.project.bank.entity.model.Transaction;
 import com.project.bank.enumeration.AccountStatusEnum;
@@ -28,7 +28,7 @@ public class TransactionsService implements TransactionRepositoryService {
     @Autowired
     private TransactionRepository transactionRepository;
     @Autowired
-    private BankAccountInfoService bankAccountInfoService;
+    private AccountService accountService;
     @Autowired
     private PixKeyService pixKeyService;
     @Autowired
@@ -36,22 +36,19 @@ public class TransactionsService implements TransactionRepositoryService {
 
     @Override
     @Transactional
-    public TransactionDto createTransaction(TransactionDto transaction, String cpf) {
+    public Transaction createTransaction(TransactionDto transaction, String cpf) {
         PixKey pixKey = pixKeyService.getPixKey(transaction.keyValue());
-        BankAccountInfo bankAccountInfoSender = bankAccountInfoService.getUserAccount(cpf);
-        BankAccountInfo bankAccountInfoReceiver = pixKey.getBankAccountInfo();
+        Account accountSender = accountService.getClientAccount(cpf);
+        Account accountReceiver = pixKey.getAccount();
         BigDecimal transactionValue = transaction.value();
         String transactionPassword = transaction.transactionPassword();
 
-        validateTransaction(bankAccountInfoSender, bankAccountInfoReceiver, transactionValue, transactionPassword);
-
-        bankAccountInfoSender.setBalance(bankAccountInfoSender.getBalance().subtract(transactionValue));
-        bankAccountInfoReceiver.setBalance(bankAccountInfoReceiver.getBalance().add(transactionValue));
-
-        Transaction userTransactionBuilder = createUserTransactionsObject(bankAccountInfoSender, bankAccountInfoReceiver, transactionValue);
+        validateTransaction(accountSender, accountReceiver, transactionValue, transactionPassword);
+        accountSender.setBalance(accountSender.getBalance().subtract(transactionValue));
+        accountReceiver.setBalance(accountReceiver.getBalance().add(transactionValue));
+        Transaction userTransactionBuilder = createUserTransactionsObject(accountSender, accountReceiver, transactionValue);
         transactionRepository.save(userTransactionBuilder);
-
-        return modelMapper.map(userTransactionBuilder, TransactionDto.class);
+        return userTransactionBuilder;
     }
 
     @Override
@@ -64,34 +61,33 @@ public class TransactionsService implements TransactionRepositoryService {
 
     @Override
     public List<TransactionDto> getTransactions(String cpf) {
-        BankAccountInfo bankAccountInfo = bankAccountInfoService.getUserAccount(cpf);
-        return convertListUserTransactionsDto(transactionRepository.findAllBySenderOrReceiverId(bankAccountInfo.getId()));
+        Account account = accountService.getClientAccount(cpf);
+        return convertListUserTransactionsDto(transactionRepository.findAllBySenderOrReceiverId(account.getId()));
     }
 
-    private static void validateTransaction(BankAccountInfo bankAccountInfoSender, BankAccountInfo bankAccountInfoReceiver, BigDecimal value, String passwordTransaction) {
-        AccountStatusEnum accountStatusEnumReceiver = bankAccountInfoReceiver.getAccountStatus();
+    private static void validateTransaction(Account accountSender, Account accountReceiver, BigDecimal value, String passwordTransaction) {
+        AccountStatusEnum accountStatusEnumReceiver = accountReceiver.getAccountStatus();
 
         if (passwordTransaction.isEmpty())
             throw new BusinessException("Cadastre uma password para transações.");
-        if (bankAccountInfoSender.getBalance().compareTo(value) < 0)
+        if (accountSender.getBalance().compareTo(value) < 0)
             throw new BusinessException("Saldo insuficiente");
-        if (bankAccountInfoReceiver.equals(bankAccountInfoSender))
+        if (accountReceiver.equals(accountSender))
             throw new BusinessException("Não é possível transferir para a própria conta");
-        ;
-        if (bankAccountInfoSender.getAccountType().equals(AccountTypeEnum.SAVINGS))
+        if (accountSender.getAccountType().equals(AccountTypeEnum.SAVINGS))
             throw new BusinessException("Não é possível transferir a partir de uma conta-poupança");
         if (accountStatusEnumReceiver.equals(AccountStatusEnum.BLOCKED) || accountStatusEnumReceiver.equals(AccountStatusEnum.INACTIVE))
             throw new BusinessException("Conta destino bloqueada ou inativa no momento.");
-        if (!new BCryptPasswordEncoder().matches(passwordTransaction, bankAccountInfoSender.getTransactionPassword().getTransactionPassword()))
+        if (!new BCryptPasswordEncoder().matches(passwordTransaction, accountSender.getTransactionPassword().getTransactionPassword()))
             throw new BusinessException("Senha incorreta.");
     }
 
-    private static Transaction createUserTransactionsObject(BankAccountInfo bankAccountInfoSender, BankAccountInfo bankAccountInfoReceiver, BigDecimal value) {
+    private static Transaction createUserTransactionsObject(Account accountSender, Account accountReceiver, BigDecimal value) {
         return Transaction.builder()
-                .sender(bankAccountInfoSender)
-                .receiver(bankAccountInfoReceiver)
+                .sender(accountSender)
+                .receiver(accountReceiver)
                 .value(value)
-                .transactionDateTime(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 
@@ -101,15 +97,4 @@ public class TransactionsService implements TransactionRepositoryService {
             transferenciasDto.add(modelMapper.map(userTransaction, TransactionDto.class));
         return transferenciasDto;
     }
-
-    /*private static BankAccountInfoDto convertUserBankInfoDto(BankAccountInfo bankAccountInfo)
-    {
-        return BankAccountInfoDto.builder()
-                .id(bankAccountInfo.getId())
-                .branchNumber(bankAccountInfo.getBranchNumber())
-                .accountTypeEnum(bankAccountInfo.getAccountType())
-                .accountStatusEnum(bankAccountInfo.getAccountStatus())
-                .accountNumber(bankAccountInfo.getAccountNumber())
-                .build();
-    }*/
 }

@@ -1,36 +1,38 @@
 package com.project.bank.service.implementation;
 
 import com.project.bank.entity.dto.PixKeyDto;
-import com.project.bank.entity.model.BankAccountInfo;
+import com.project.bank.entity.model.Account;
 import com.project.bank.entity.model.PixKey;
 import com.project.bank.enumeration.KeyTypeEnum;
 import com.project.bank.handler.BusinessException;
 import com.project.bank.handler.NotFoundException;
 import com.project.bank.repository.PixKeyRepository;
 import com.project.bank.service.repository.PixKeyRepositoryService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
 
-@RequiredArgsConstructor
 @Service
 public class PixKeyService implements PixKeyRepositoryService {
+    private final PixKeyRepository pixKeyRepository;
+    private final AccountService accountService;
+
     @Autowired
-    private PixKeyRepository pixKeyRepository;
-    @Autowired
-    private BankAccountInfoService bankAccountInfoService;
+    public PixKeyService(PixKeyRepository pixKeyRepository, AccountService accountService) {
+        this.pixKeyRepository = pixKeyRepository;
+        this.accountService = accountService;
+    }
 
     @Override
     public PixKey createPixKey(PixKeyDto pixKeyDto, String cpf) {
-        BankAccountInfo bankAccountInfo = bankAccountInfoService.getUserAccount(cpf);
-        List<PixKey> pixKeys = pixKeyRepository.findAllKeysByCpf(cpf);
+        Account account = accountService.getClientAccount(cpf);
+        List<PixKey> pixKeys = this.getAllPixKeys(cpf);
         for (PixKey pixKey : pixKeys)
-            if (pixKey.getKeyType().equals(pixKeyDto.keyTypeEnum()))
+            if (pixKey.getKeyType().equals(pixKeyDto.keyType()))
                 throw new BusinessException("Você já cadastrou uma chave pix para este tipo");
-        return pixKeyRepository.save(createUserPixKeyObject(bankAccountInfo, pixKeyDto.keyTypeEnum()));
+        return this.savePixKey(createUserPixKeyObject(account, pixKeyDto.keyType()));
     }
 
     @Override
@@ -45,7 +47,7 @@ public class PixKeyService implements PixKeyRepositoryService {
     public String deletePixKey(PixKeyDto pixKeyDto, String cpf) {
         List<PixKey> pixKeys = pixKeyRepository.findAllKeysByCpf(cpf);
         for (PixKey pixKey : pixKeys)
-            if (pixKey.getKeyType().equals(pixKeyDto.keyTypeEnum())) {
+            if (pixKey.getKeyType().equals(pixKeyDto.keyType())) {
                 pixKeyRepository.delete(pixKey);
                 return "Chave PIX excluída com sucesso!";
             }
@@ -59,19 +61,24 @@ public class PixKeyService implements PixKeyRepositoryService {
         );
     }
 
-    private static PixKey createUserPixKeyObject(BankAccountInfo bankAccountInfo, KeyTypeEnum keyTypeEnum) {
+    @Override
+    public PixKey savePixKey(PixKey pixKey) {
+        return pixKeyRepository.save(pixKey);
+    }
+
+    private static PixKey createUserPixKeyObject(Account account, KeyTypeEnum keyTypeEnum) {
         return PixKey.builder()
                 .keyType(keyTypeEnum)
-                .bankAccountInfo(bankAccountInfo)
-                .keyValue(generatePixKey(bankAccountInfo, keyTypeEnum))
+                .account(account)
+                .keyValue(generatePixKey(account, keyTypeEnum))
                 .build();
     }
 
-    private static String generatePixKey(BankAccountInfo bankAccountInfo, KeyTypeEnum keyTypeEnum) {
+    private static String generatePixKey(Account account, KeyTypeEnum keyTypeEnum) {
         return switch (keyTypeEnum) {
-            case CPF -> bankAccountInfo.getUserPersonalInfo().getCpf();
-            case EMAIL -> bankAccountInfo.getUserPersonalInfo().getEmail();
-            case PHONE_NUMBER -> bankAccountInfo.getUserPersonalInfo().getPhoneNumber();
+            case CPF -> account.getClient().getCpf();
+            case EMAIL -> account.getClient().getEmail();
+            case PHONE_NUMBER -> account.getClient().getPhoneNumber();
             case RANDOM -> generatePixKeyRandomType();
         };
     }

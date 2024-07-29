@@ -1,7 +1,7 @@
 package com.project.bank.email;
 
 import com.project.bank.entity.model.AccountRequest;
-import com.project.bank.entity.model.BankAccountInfo;
+import com.project.bank.entity.model.Account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.mail.MailException;
@@ -51,19 +51,19 @@ public class EmailService
                                         + "\n\nAtenciosamente, equipe Bank.")
                         .build();
     }
-    public EmailDto generateApprovedAccountEmail(BankAccountInfo bankAccountInfoCriada)
+    public EmailDto generateApprovedAccountEmail(Account accountCriada)
     {
         return EmailDto.builder()
                 .ownerRef("Bank")
                 .emailFrom("noreply-bank@gmail.com")
-                .emailTo(bankAccountInfoCriada.getUserPersonalInfo().getEmail())
+                .emailTo(accountCriada.getClient().getEmail())
                 .subject("Solicitação de conta")
                 .body(
-                        "Olá, " + bankAccountInfoCriada.getUserPersonalInfo().getFirstName() + "."
+                        "Olá, " + accountCriada.getClient().getFirstName() + "."
                                 + "\n\nSua solicitação de conta foi aprovada!"
                                 + "\n\nAcesse o aplicativo com seu CPF e password cadastrados na solicitação."
-                                + "\nConta: " + bankAccountInfoCriada.getAccountNumber()
-                                + "\nAgência: " + bankAccountInfoCriada.getBranchNumber()
+                                + "\nConta: " + accountCriada.getAccountNumber()
+                                + "\nAgência: " + accountCriada.getBranchNumber()
                                 + "\n\nAtenciosamente, equipe Bank.")
                 .build();
     }
