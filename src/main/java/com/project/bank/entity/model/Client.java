@@ -5,24 +5,24 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "tb_user_personal_info")
+@Table(name = "tb_client")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
-public class UserPersonalInfo {
+public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(nullable = false, length = 11, unique = true)
+    private String cpf;
 
     @Column(name = "first_name", nullable = false, length = 25)
     private String firstName;
 
     @Column(name = "last_name", nullable = false, length = 25)
     private String lastName;
-
-    @Column(nullable = false, length = 11, unique = true)
-    private String cpf;
 
     @Column(name = "date_of_birth", nullable = false, length = 10)
     private String dateOfBirth;
@@ -35,7 +35,12 @@ public class UserPersonalInfo {
     @Column(name = "phone_number", nullable = false, length = 11, unique = true)
     private String phoneNumber;
 
-    @OneToOne(mappedBy = "userPersonalInfo", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne
+    @JoinColumn(name = "address_id", nullable = false)
     @JsonIgnore
     private Address address;
+
+    @OneToOne(mappedBy = "client")
+    @JsonIgnore
+    private Account account;
 }

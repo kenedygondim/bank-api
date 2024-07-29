@@ -1,21 +1,22 @@
 package com.project.bank.entity.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.bank.enumeration.AccountStatusEnum;
 import com.project.bank.enumeration.AccountTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
+import com.project.bank.enumeration.AccountStatusEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tb_user_bank_info")
+@Table(name = "tb_account")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
-public class BankAccountInfo {
+@Setter
+public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -38,21 +39,22 @@ public class BankAccountInfo {
     @Column(nullable = false)
     @Setter
     @Builder.Default
-    private BigDecimal balance = BigDecimal.valueOf(0.0);
+    private BigDecimal balance = BigDecimal.valueOf(100.00);
 
-    @Column(name = "creation_date_time", nullable = false)
-    private LocalDateTime creationDateTime;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_personal_info_id", nullable = false)
+    @JoinColumn(name = "client_id", nullable = false)
     @JsonIgnore
-    private UserPersonalInfo userPersonalInfo;
+    private Client client;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "account_access_id", nullable = false)
     @JsonIgnore
     private AccountAccess accountAccess;
 
-    @OneToOne(mappedBy = "bankAccountInfo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "account")
+    @JsonIgnore
     private TransactionPassword transactionPassword;
 }

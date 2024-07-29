@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tb_user_pix_keys")
+@Table(name = "tb_pix_key")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -27,7 +27,7 @@ public class PixKey {
     private String keyValue;
 
     @ManyToOne
-    @JoinColumn(name = "user_bank_info_id",nullable = false)
+    @JoinColumn(name = "account_id",nullable = false)
     @JsonIgnore
-    private BankAccountInfo bankAccountInfo;
+    private Account account;
 }

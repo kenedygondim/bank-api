@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tb_user_transactions")
+@Table(name = "tb_transaction")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -18,15 +18,15 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
-    private BankAccountInfo sender;
+    private Account sender;
 
     @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
-    private BankAccountInfo receiver;
+    private Account receiver;
 
     @Column(nullable = false)
     private BigDecimal value;
 
-    @Column(name = "transaction_date_time", nullable = false)
-    private LocalDateTime transactionDateTime;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }

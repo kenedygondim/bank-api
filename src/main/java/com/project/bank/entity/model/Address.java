@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "tb_user_address")
+@Table(name = "tb_address")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -19,26 +19,25 @@ public class Address {
     @Column(name = "postal_code",nullable = false, length = 9)
     private String postalCode;
 
-    @Column(nullable = false, length = 2)
-    private String state;
+    @Column(name = "state_abbr", nullable = false, length = 2)
+    private String stateAbbr;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 40)
     private String city;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 40)
     private String neighborhood;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 40)
     private String street;
 
-    @Column(nullable = false, length = 10)
-    private String number;
+    @Column(name="house_number", nullable = false, length = 10)
+    private String houseNumber;
 
     @Column(nullable = true, length = 10)
     private String complement;
 
-    @OneToOne
-    @JoinColumn(name = "user_personal_info_id", nullable = false)
-    @JsonIgnore
-    private UserPersonalInfo userPersonalInfo;
+    @OneToOne(mappedBy = "address")
+    private Client client;
 }
+
