@@ -5,7 +5,7 @@ import com.project.bank.enumeration.AccountTypeEnum;
 import lombok.Builder;
 
 @Builder
-public record BankAccountInfoDto
+public record AccountDto
         (
               String id,
               AccountTypeEnum accountTypeEnum,

@@ -8,6 +8,6 @@ public record PixKeyDto
         (
         String id,
         @NotNull(message = "Selecione o tipo de chave que deseja criar!")
-        KeyTypeEnum keyTypeEnum,
+        KeyTypeEnum keyType,
         String keyValue
         ) {}

@@ -3,7 +3,7 @@ package com.project.bank.entity.dto;
 import lombok.Builder;
 
 @Builder
-public record UserPersonalInfoDto
+public record ClientDto
         (
                String id,
                String fullName,

@@ -18,7 +18,6 @@ public record AccountRequestDto(
         @Pattern(regexp = "^[A-Za-z][a-z]+( [A-Za-z][a-z]*)*$", message = "O campo deve começar com uma letra, conter mais de uma letra e permitir espaços após duas letras ou mais.")
         String lastName,
 
-        @CPF
         @NotBlank(message = "O campo de cpf não pode estar vazio.")
         String cpf,
 
@@ -34,7 +33,15 @@ public record AccountRequestDto(
         String phoneNumber,
 
         @Size(min = 8, max = 12, message = "A password de acesso deve ter entre 8 e 12 caracteres.")
-        String password
+        String password,
+
+        @NotBlank(message = "O cep não pode estar vazio.")
+        String postalCode,
+
+        @NotBlank(message = "O número da casa não pode estar vazio.")
+        String houseNumber,
+
+        String complement
 )
 {
 }
