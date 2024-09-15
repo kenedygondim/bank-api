@@ -12,11 +12,16 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 @RestController
 @RequestMapping("/bank/transactionPassword")
-@AllArgsConstructor
 public class TransactionPasswordController
 {
+
+    private final TransactionPasswordService transactionPasswordService;
+
     @Autowired
-    private TransactionPasswordService transactionPasswordService;
+    public TransactionPasswordController(TransactionPasswordService transactionPasswordService) {
+        this.transactionPasswordService = transactionPasswordService;
+    }
+
     @PostMapping
     public ResponseEntity<String> createTransactionPassword(@RequestBody @Valid TransactionPasswordDto transactionPasswordDto, Principal principal)
     {

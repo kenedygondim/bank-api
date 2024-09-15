@@ -11,13 +11,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
-@AllArgsConstructor
 @RestController
 @RequestMapping("/bank/address")
 public class AddressController
 {
+    private final AddressService addressService;
+
     @Autowired
-    private AddressService addressService;
+    public AddressController(AddressService addressService) {
+        this.addressService = addressService;
+    }
 
     @PostMapping
     public ResponseEntity<Address> createAddress(@RequestBody @Valid AddressDto addressDto, Principal principal)

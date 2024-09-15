@@ -14,11 +14,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bank/transaction")
-@RequiredArgsConstructor
 public class TransactionController
 {
+    private final TransactionsService transactionsService;
+
     @Autowired
-    private TransactionsService transactionsService;
+    public TransactionController(TransactionsService transactionsService) {
+        this.transactionsService = transactionsService;
+    }
 
     @PostMapping
     public ResponseEntity<Transaction> createTransaction(@RequestBody @Valid TransactionDto transactionDto, Principal principal)

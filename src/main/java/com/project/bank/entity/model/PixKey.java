@@ -3,17 +3,14 @@ package com.project.bank.entity.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.bank.enumeration.KeyTypeEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "tb_pix_key")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
+@Setter
 public class PixKey {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

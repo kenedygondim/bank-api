@@ -22,24 +22,32 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
+
 @Service
 public class TransactionsService implements TransactionRepositoryService {
+    private final TransactionRepository transactionRepository;
+    private final AccountService accountService;
+    private final PixKeyService pixKeyService;
+    private final ModelMapper modelMapper;
+
+
     @Autowired
-    private TransactionRepository transactionRepository;
-    @Autowired
-    private AccountService accountService;
-    @Autowired
-    private PixKeyService pixKeyService;
-    @Autowired
-    private ModelMapper modelMapper;
+    public TransactionsService(TransactionRepository transactionRepository, AccountService accountService, PixKeyService pixKeyService, ModelMapper modelMapper) {
+        this.transactionRepository = transactionRepository;
+        this.accountService = accountService;
+        this.pixKeyService = pixKeyService;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     @Transactional
     public Transaction createTransaction(TransactionDto transaction, String cpf) {
         PixKey pixKey = pixKeyService.getPixKey(transaction.keyValue());
+
         Account accountSender = accountService.getClientAccount(cpf);
         Account accountReceiver = pixKey.getAccount();
+
+
         BigDecimal transactionValue = transaction.value();
         String transactionPassword = transaction.transactionPassword();
 

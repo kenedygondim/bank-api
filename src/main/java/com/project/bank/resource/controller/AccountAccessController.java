@@ -14,18 +14,21 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("bank/auth")
-@RequiredArgsConstructor
 public class AccountAccessController
 {
+    private final AuthenticationManager authManager;
+    private final AccountAccessRepository accountAccessRepository;
+    private final TokenService tokenService;
+
     @Autowired
-    private AuthenticationManager authManager;
-    @Autowired
-    private AccountAccessRepository accountAccessRepository;
-    @Autowired
-    private TokenService tokenService;
+    public AccountAccessController(AuthenticationManager authManager, AccountAccessRepository accountAccessRepository, TokenService tokenService) {
+        this.authManager = authManager;
+        this.accountAccessRepository = accountAccessRepository;
+        this.tokenService = tokenService;
+    }
 
     @PostMapping("/login")
-    public ResponseEntity login (@RequestBody @Valid AccessAccountDto form)
+    public ResponseEntity<String> login (@RequestBody @Valid AccessAccountDto form)
     {
         AccountAccess accountAccess = accountAccessRepository.findFirstByLogin(form.login());
         if(accountAccess == null)

@@ -1,21 +1,15 @@
 package com.project.bank.email;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Data;
 
-@Data
-@Builder
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class EmailDto
 {
-    @NotNull
-    private String ownerRef;
-    @NotNull
-    private String emailFrom;
-    @NotNull
+    private String userId;
     private String emailTo;
-    @NotNull
-    private String subject;
-    @NotNull
-    private String body;
+    private String emailSubject;
+    private String emailBody;
 }

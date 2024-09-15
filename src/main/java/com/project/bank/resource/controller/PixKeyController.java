@@ -13,11 +13,15 @@ import java.security.Principal;
 import java.util.List;
 @RestController
 @RequestMapping("/bank/pixKey")
-@RequiredArgsConstructor
 public class PixKeyController
 {
+
+    private final PixKeyService pixKeyService;
+
     @Autowired
-    private PixKeyService pixKeyService;
+    public PixKeyController(PixKeyService pixKeyService) {
+        this.pixKeyService = pixKeyService;
+    }
 
     @GetMapping("/all")
     public ResponseEntity<List<PixKey>> getPixKeys(Principal principal)

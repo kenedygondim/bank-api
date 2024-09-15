@@ -16,13 +16,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter
 {
-    @Autowired
-    private TokenService tokenService;
-    @Autowired
-    private AccountAccessRepository accountAccessRepository;
+    private final TokenService tokenService;
+    private final AccountAccessRepository accountAccessRepository;
+
+    public SecurityFilter(TokenService tokenService, AccountAccessRepository accountAccessRepository) {
+        this.tokenService = tokenService;
+        this.accountAccessRepository = accountAccessRepository;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException

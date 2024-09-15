@@ -1,11 +1,12 @@
 package com.project.bank.service.implementation;
 
-import com.project.bank.email.EmailService;
 import com.project.bank.entity.model.*;
 import com.project.bank.enumeration.AccountStatusEnum;
 import com.project.bank.enumeration.AccountTypeEnum;
 import com.project.bank.enumeration.RoleEnum;
+import com.project.bank.enumeration.TypeMessageEmailEnum;
 import com.project.bank.handler.NotFoundException;
+import com.project.bank.producers.ClientProducer;
 import com.project.bank.repository.AccountRepository;
 import com.project.bank.service.repository.AccountRepositoryService;
 import jakarta.transaction.Transactional;
@@ -19,16 +20,16 @@ import java.util.Random;
 public class AccountService implements AccountRepositoryService {
     private final AccountRepository accountRepository;
     private final  AccountRequestService accountRequestService;
-    private final EmailService emailService;
+    private final ClientProducer clientProducer;
     private final AddressService addressService;
     private final ClientService clientService;
     private final AccountAccessService accountAccessService;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, AccountRequestService accountRequestService, EmailService emailService, AddressService addressService, ClientService clientService, AccountAccessService accountAccessService) {
+    public AccountService(AccountRepository accountRepository, AccountRequestService accountRequestService, ClientProducer clientProducer, AddressService addressService, ClientService clientService, AccountAccessService accountAccessService) {
         this.accountRepository = accountRepository;
         this.accountRequestService = accountRequestService;
-        this.emailService = emailService;
+        this.clientProducer = clientProducer;
         this.addressService = addressService;
         this.clientService = clientService;
         this.accountAccessService = accountAccessService;
@@ -51,7 +52,7 @@ public class AccountService implements AccountRepositoryService {
         Client client = clientService.saveClient(createUserPersonalInfoObject(accountRequest, address));
         AccountAccess accountAccess = accountAccessService.saveAccountAccess(createAccountAccessObject(accountRequest));
         Account account = createUserBankInfoObject(accountRequest, client, accountAccess);
-        emailService.sendEmail(emailService.generateApprovedAccountEmail(account));
+        clientProducer.publishMessageEmail(accountRequest, TypeMessageEmailEnum.WELCOME);
         this.saveAccount(account);
         accountRequestService.deleteAccountRequest(requestId);
         return "Conta aprovada com sucesso!";
@@ -61,7 +62,7 @@ public class AccountService implements AccountRepositoryService {
     public String disapproveAccount(String requestId) {
         AccountRequest accountRequest = accountRequestService.getAccountRequest(requestId);
         accountRequestService.deleteAccountRequest(requestId);
-        emailService.sendEmail(emailService.generateDisapprovedAccountEmail(accountRequest));
+        clientProducer.publishMessageEmail(accountRequest, TypeMessageEmailEnum.ACCOUNTDISAPPROVED);
         return "Conta reprovada com sucesso!";
     }
 
@@ -88,6 +89,7 @@ public class AccountService implements AccountRepositoryService {
 
     private static Client createUserPersonalInfoObject(AccountRequest accountRequest, Address address) {
         return Client.builder()
+                .id(accountRequest.getId())
                 .firstName(accountRequest.getFirstName())
                 .lastName(accountRequest.getLastName())
                 .cpf(accountRequest.getCpf())

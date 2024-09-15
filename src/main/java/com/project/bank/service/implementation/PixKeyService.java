@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class PixKeyService implements PixKeyRepositoryService {
@@ -27,20 +29,30 @@ public class PixKeyService implements PixKeyRepositoryService {
 
     @Override
     public PixKey createPixKey(PixKeyDto pixKeyDto, String cpf) {
+        CompletableFuture<List<PixKey>> pixKeysAsync = CompletableFuture.supplyAsync(
+                () -> this.getAllPixKeys(cpf)
+        );
+
         Account account = accountService.getClientAccount(cpf);
-        List<PixKey> pixKeys = this.getAllPixKeys(cpf);
-        for (PixKey pixKey : pixKeys)
-            if (pixKey.getKeyType().equals(pixKeyDto.keyType()))
-                throw new BusinessException("Você já cadastrou uma chave pix para este tipo");
-        return this.savePixKey(createUserPixKeyObject(account, pixKeyDto.keyType()));
+        CompletableFuture<String> generatedPixKey = generatePixKey(account, pixKeyDto.keyType());
+        try {
+            for (PixKey pixKey : pixKeysAsync.get())
+                if (pixKey.getKeyType().equals(pixKeyDto.keyType()))
+                    throw new BusinessException("Você já cadastrou uma chave pix para este tipo");
+
+            PixKey newPixKey = new PixKey();
+            newPixKey.setKeyType(pixKeyDto.keyType());
+            newPixKey.setAccount(account);
+            newPixKey.setKeyValue(generatedPixKey.join());
+            return this.savePixKey(newPixKey);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<PixKey> getAllPixKeys(String cpf) {
-        List<PixKey> pixKeys = pixKeyRepository.findAllKeysByCpf(cpf);
-        if (pixKeys.isEmpty())
-            throw new BusinessException("Nenhuma chave pix encontrada");
-        return pixKeys;
+        return pixKeyRepository.findAllKeysByCpf(cpf);
     }
 
     @Override
@@ -66,22 +78,19 @@ public class PixKeyService implements PixKeyRepositoryService {
         return pixKeyRepository.save(pixKey);
     }
 
-    private static PixKey createUserPixKeyObject(Account account, KeyTypeEnum keyTypeEnum) {
-        return PixKey.builder()
-                .keyType(keyTypeEnum)
-                .account(account)
-                .keyValue(generatePixKey(account, keyTypeEnum))
-                .build();
-    }
 
-    private static String generatePixKey(Account account, KeyTypeEnum keyTypeEnum) {
-        return switch (keyTypeEnum) {
+
+    private static CompletableFuture<String> generatePixKey(Account account, KeyTypeEnum keyTypeEnum) {
+        return CompletableFuture.supplyAsync(() -> switch (keyTypeEnum) {
             case CPF -> account.getClient().getCpf();
             case EMAIL -> account.getClient().getEmail();
             case PHONE_NUMBER -> account.getClient().getPhoneNumber();
             case RANDOM -> generatePixKeyRandomType();
-        };
+            default -> throw new IllegalArgumentException("Unexpected value: " + keyTypeEnum);
+        });
     }
+
+
 
     private static String generatePixKeyRandomType() {
         Random random = new Random();

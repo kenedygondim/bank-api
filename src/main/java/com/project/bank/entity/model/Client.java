@@ -12,7 +12,6 @@ import lombok.*;
 @Getter
 public class Client {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Column(nullable = false, length = 11, unique = true)

@@ -11,11 +11,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bank/client")
-@RequiredArgsConstructor
 public class ClientController
 {
+    private final ClientService clientService;
+
     @Autowired
-    private ClientService clientService;
+    public ClientController(ClientService clientService) {
+        this.clientService = clientService;
+    }
+
 
     @GetMapping
     public ResponseEntity<Client> getUser(Principal principal)

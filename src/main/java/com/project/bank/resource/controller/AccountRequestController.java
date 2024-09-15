@@ -13,11 +13,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bank/accountRequest")
-@RequiredArgsConstructor
 public class AccountRequestController
 {
+    private final AccountRequestService accountRequestService;
+
     @Autowired
-    private AccountRequestService accountRequestService;
+    public AccountRequestController (AccountRequestService accountRequestService){
+        this.accountRequestService = accountRequestService;
+    }
 
     @PostMapping
     public ResponseEntity<AccountRequest> requestAccount(@RequestBody @Valid AccountRequestDto accountRequestDto)

@@ -8,11 +8,15 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequestMapping("/bank")
-@RequiredArgsConstructor
 public class AccountController
 {
+
+    private final AccountService accountService;
+
     @Autowired
-    private AccountService accountService;
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @PostMapping("/approveAccount/{id}")
     public ResponseEntity<String> approveAccount(@PathVariable("id") String id)
